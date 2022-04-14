@@ -1,0 +1,195 @@
+# TODO: Consider migrating to HTTP APIs https://www.serverless.com/framework/docs/providers/aws/events/http-api
+service: image-service
+frameworkVersion: "3"
+
+provider:
+  name: "aws"
+  runtime: "nodejs14.x"
+  timeout: 10
+  stage: ${opt:stage, "staging"}
+  region: ${self:custom.settings.region}
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "s3:GetObject"
+            - "s3:PutObject" # Consider Multipart Upload in case of big assets
+            - "s3:DeleteObject"
+            - "s3:ListBucket"
+          Resource: "arn:aws:s3:::${self:custom.settings.environment.SOURCE_BUCKET}/*"
+  apiGateway:
+    shouldStartNameWithService: true
+    binaryMediaTypes:
+      - "*/*"
+
+layers:
+  sharp:
+    path: "lambdaLayers/SharpLayer" # required, path to layer contents on disk
+    name: ${self:provider.stage}-sharp # optional, Deployed Lambda layer name
+    package:
+      patterns:
+        - "node_modules/**"
+    description: "sharp@0.27.2"
+    compatibleRuntimes:
+      - "nodejs14.x"
+    licenseInfo: "Apache License 2.0"
+    retain: false
+
+resources:
+  Resources:
+    S3Bucket:
+      Type: "AWS::S3::Bucket"
+      Properties:
+        BucketName: ${self:custom.settings.environment.SOURCE_BUCKET}
+        AccessControl: "Private"
+        WebsiteConfiguration:
+          IndexDocument: " " # One space char is a hack for allowing static hosting without index.html
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false
+          RestrictPublicBuckets: false
+        CorsConfiguration:
+          CorsRules:
+            - AllowedMethods:
+                - "POST"
+                - "DELETE"
+              AllowedOrigins:
+                - "*"
+              AllowedHeaders:
+                - "*"
+              ExposedHeaders:
+                - "x-amz-server-side-encryption"
+                - "x-amz-request-id"
+                - "x-amz-id-2"
+              MaxAge: 3000
+    S3BucketPolicy:
+      Type: "AWS::S3::BucketPolicy"
+      Properties:
+        Bucket: ${self:custom.settings.environment.SOURCE_BUCKET}
+        PolicyDocument: ${self:custom.settings.bucketPolicy}
+    CloudFrontDistribution:
+      Type: "AWS::CloudFront::Distribution"
+      Properties:
+        DistributionConfig:
+          HttpVersion: "http2"
+          Comment: "Cloudfront Distribution for image-service"
+          DefaultCacheBehavior:
+            TargetOriginId: "ApiGateway"
+            ViewerProtocolPolicy: "redirect-to-https"
+            DefaultTTL: 30
+            AllowedMethods:
+              - "GET"
+              - "HEAD"
+              - "OPTIONS"
+              - "PUT"
+              - "PATCH"
+              - "POST"
+              - "DELETE"
+            ForwardedValues:
+              Headers:
+                - "Accept"
+              QueryString: true
+          Enabled: true
+          Origins:
+            - Id: "ApiGateway"
+              DomainName:
+                Fn::Join:
+                  - "."
+                  - - Ref: "ApiGatewayRestApi"
+                    - "execute-api.${self:custom.settings.region}.amazonaws.com"
+              OriginPath: "/${self:provider.stage}"
+              CustomOriginConfig:
+                HTTPPort: 80
+                HTTPSPort: 443
+                OriginProtocolPolicy: https-only
+          Aliases:
+            - ${self:custom.settings.environment.CUSTOM_DOMAIN}
+          ViewerCertificate:
+            AcmCertificateArn: ${self:custom.settings.environment.ACM_CERTIFICATE_ARN}
+            SslSupportMethod: "sni-only"
+            MinimumProtocolVersion: "TLSv1.2_2021"
+  Outputs:
+    CloudFrontDistributionOutput:
+      Value:
+        "Fn::GetAtt": ["CloudFrontDistribution", "DomainName"]
+functions:
+  get:
+    package:
+      individually: true
+      patterns:
+        - "!**"
+        - "src/errors/**"
+        - "src/helpers/**"
+        - "src/get.js"
+    handler: "src/get.handler"
+    layers:
+      - { Ref: "SharpLambdaLayer" }
+    events:
+      - http:
+          path: "/{any+}"
+          method: "get"
+    environment: ${self:custom.settings.environment}
+  # ! Debugging Endpoint for listing all S3 Keys
+  list:
+    package:
+      individually: true
+      patterns:
+        - "!**"
+        - "src/errors/**"
+        - "src/helpers/**"
+        - "src/list.js"
+    handler: "src/list.handler"
+    layers:
+      - { Ref: "SharpLambdaLayer" }
+    events:
+      - http:
+          path: "/"
+          method: "get"
+    environment: ${self:custom.settings.environment}
+  post:
+    package:
+      individually: true
+      patterns:
+        - "!**"
+        - "src/errors/**"
+        - "src/helpers/**"
+        - "src/post.js"
+    handler: "src/post.handler"
+    layers:
+      - { Ref: "SharpLambdaLayer" }
+    events:
+      - http:
+          path: "/{any+}"
+          method: "post"
+          cors:
+            origin: ${self:custom.settings.corsOrigin}
+    environment: ${self:custom.settings.environment}
+  delete:
+    package:
+      individually: true
+      patterns:
+        - "!**"
+        - "src/errors/**"
+        - "src/helpers/**"
+        - "src/delete.js"
+    handler: "src/delete.handler"
+    layers:
+      - { Ref: "SharpLambdaLayer" }
+    events:
+      - http:
+          path: "/{any+}"
+          method: "delete"
+          cors:
+            origin: ${self:custom.settings.corsOrigin}
+    environment: ${self:custom.settings.environment}
+
+custom:
+  settingsFilePath: ${opt:settings,'./settings.yml'}
+  settings: ${file(${self:custom.settingsFilePath}):stages.${self:provider.stage}}
+  serverless-offline:
+    httpPort: 8004
+    noPrependStageInUrl: true
+plugins:
+  - serverless-offline

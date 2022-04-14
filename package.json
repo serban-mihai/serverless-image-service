@@ -1,0 +1,36 @@
+{
+  "name": "serverless-image-service",
+  "description": "A complete solution built with Serverless to manage, manipulate and serve images on-demand!",
+  "author": {
+    "name": "Șerban Mihai-Ciprian",
+    "url": "https://serbanmihai.com",
+    "email": "contact@serbanmihai.com"
+  },
+  "scripts": {
+    "build": "sls package",
+    "info:dev": "sls info --stage dev",
+    "info:staging": "sls info --stage staging",
+    "info:prod": "sls info --stage prod",
+    "print:dev": "sls print --stage dev",
+    "print:staging": "sls print --stage staging",
+    "print:prod": "sls print --stage prod",
+    "offline:dev": "sls offline --stage dev",
+    "offline:staging": "sls offline --stage staging",
+    "offline:prod": "sls offline --stage prod]",
+    "deploy:dev": "sls deploy --stage dev",
+    "deploy:staging": "sls deploy --stage staging",
+    "deploy:prod": "sls deploy --stage prod"
+    
+  },
+  "version": "1.0.1",
+  "private": false,
+  "license": "MIT",
+  "devDependencies": {
+    "aws-sdk": "^2.668.0",
+    "aws-sdk-mock": "^5.1.0",
+    "serverless": "^3.13.0",
+    "serverless-offline": "^8.5.0",
+    "sharp": "0.28.0",
+    "standard": "^16.0.3"
+  }
+}

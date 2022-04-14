@@ -1,0 +1,18 @@
+# System Files
+.github/
+**/.DS_Store
+.idea
+.nyc_output/
+coverage
+/node_modules/*
+.env
+# package directories
+jspm_packages
+
+# Serverless directories
+.serverless
+settings.yml
+settings.*.yml
+
+# Custom
+s3-bucket-policy-*.json
