@@ -47,7 +47,7 @@
       "sortNum": 22500,
       "created": "2022-04-15T10:07:16.451Z",
       "modified": "2022-04-15T10:58:37.045Z",
-      "headers": [{ "name": "Content-Type", "value": "multipart/form-data" }],
+      "headers": [],
       "params": [],
       "body": {
         "type": "formdata",

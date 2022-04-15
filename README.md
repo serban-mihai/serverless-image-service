@@ -1,6 +1,5 @@
 # Serverless Image-Service
 
----
 A Serverless solution for **AWS** Cloud that is capable of managing, manipulating and serving images and other static assets on-demand.
 
 The project is inspired by [Serverless Sharp](https://github.com/venveo/serverless-sharp) that doesn't seem to be maintained anymore. The core features have been kept, with some bugs being fixed while other features being temporarily cut. Some might be reintroduced in near future releases.
@@ -13,7 +12,6 @@ The advantages of having your custom solution is flexibility, lower costs and cu
   - [Table of Content](#table-of-content)
   - [About](#about)
     - [Public S3 Bucket](#public-s3-bucket)
-    - [Data Flow](#data-flow)
     - [Routes](#routes)
       - [GET - List Images](#get---list-images)
       - [GET - Get Image](#get---get-image)
@@ -21,6 +19,7 @@ The advantages of having your custom solution is flexibility, lower costs and cu
       - [POST - Upload Images](#post---upload-images)
       - [DELETE - Remove Image](#delete---remove-image)
   - [Setup](#setup)
+    - [Debugging](#debugging)
   - [Local Development](#local-development)
   - [How to Deploy](#how-to-deploy)
   - [Differences from Venveo's service](#differences-from-venveos-service)
@@ -31,7 +30,6 @@ The advantages of having your custom solution is flexibility, lower costs and cu
 
 ## About
 
----
 The service is meant to be consumed from both a client App to fetch images from the GET route, and a CMS to manage static assets by uploading and removing them from an **AWS S3 Bucket** through the POST and DELETE routes.
 It is capable of storing incoming binary data and serve outcoming images with additional processing for size and quality on-demand. Image processing is handled by the [Sharp](https://github.com/lovell/sharp) library.
 
@@ -49,9 +47,6 @@ PublicAccessBlockConfiguration:
     RestrictPublicBuckets: false
 ``` 
 Alternatively you can comment just the first 2 lines to disable Static Hosting and change the remaining values to be `true`
-
-### Data Flow
-
 
 ### Routes
 | Method   | Route     | Description                                                                       | Content-Type In                         | Content-Type Out                | CORS            | Cache     | Lambda                         |
@@ -124,11 +119,11 @@ Use cases examples:
 - `/path/image.jpg?q=57`: This will reduce the **quality** of `image.jpg` by **43%** before returning it. No scaling is applied
 - `/path/image.jpg?w=250&q=30`: For last, it will attempt to scale down `image.jpg` to **250px width** (with height proportionally scaled down as well) and then reduce the quality of the scaled image by **70%**
 
-For some codec and config reasons, some formats that are applied `q=70` or higher, output a bigger size image than the original. Quality param is capped to 70 on the Lambda side for this reason until a solution is found
+For some codec and config reasons, some formats that are applied `q=70` or higher, output a bigger size image than the original.
  
 **It responds with:**
 - 🟢 Success: 
-    <img src="https://images.unsplash.com/photo-1616007211778-ab0921a264e8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80" width="350px" style="border-radius: 0.5rem; margin-top: 10px; margin-bottom: 10px">
+<kbd><img src="https://images.unsplash.com/photo-1616007211778-ab0921a264e8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80" width="350px" style="border-radius: 0.5rem; margin-top: 10px; margin-bottom: 10px"></kbd>
   
 - 🔴 Error:
   ```
@@ -158,8 +153,12 @@ The structure of the payload on the client side looks like this:
 The key for the `multipart/data-form` has to **always** be `data` because other metadata such as name and extension are already contained within the ImageBuffer that is in this case the binary reprezentation of the Image we want to upload, and they will be parsed back by Lambda once received in a correct form.
 
 There are many ways to constuct a valid payload compatible but it differs from the client App and it's libraries.
-An example with **React/Next.js** is provided in the [related paragraph](#consume-the-service-client-side)
+> An example with **React/Next.js** is provided in the [related paragraph](#consume-the-service-client-side)
 
+The raw data, once reaches Lambda, due to API Gateway [policy](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-payload-encodings-workflow.html), it **forcefully encodes** the request body into `base64`, forcing Lambda to **decode it back** into `binary` if we want to parse it further from it's `multipart/data-form` format.
+I still haven't found a hack for this, avoiding useless data transformation would be ideal since it would be less prone to bad parsing.
+
+Once the data is parsed, it's directly written on the **S3 Bucket** from the **Buffer** within the RAM, without being written on Lambda's ephemeral storage first.
 
 **It responds with:**
 - 🟢 Success: 
@@ -222,7 +221,6 @@ Gets a list of all the images in the **S3 Bucket** (currently limited to 1000 ke
   ```
 ## Setup
 
----
 Clone and install NPM dependencies:
 - `git clone https://github.com/serban-mihai/serverless-image-service.git`
 - `cd serverless-image-service && npm i`
@@ -236,19 +234,30 @@ There are a couple of things to be done before deploying:
 The reason we are creating the Certificate in `us-east-1` is that for some reason AWS won't accept to create resources in other regions such as `eu-central-1` if the Certificate also belongs in `eu-central-1`
 After the above points are checked everything should be ready to go for deployment.
 
+### Debugging
+To debug endpoints I recommend the [Thunder Client](https://www.thunderclient.com/) extension for VSCode, it's feature rich and has everything you need to send requests and debug endpoints. If you don't find yourself confortable you can also use **Postman** instead, or `curl` if you're a true hardcore!
+
+You can find both Thunder and Postman Collections and Environment in their directories inside the repo, they have predefined requests that cover all the functionality of the service, import them and change the environment accordingly with your **domain**, **path** and **filename**
+
 ## Local Development
 
----
-For local development `serverless-offline` plugin is used, in order to use it you first need to [Deploy](#deploy) it. After you deploy you can either
+Before running the localhost environment consider importing into either **Thunder** or **Postman** their corresponding Collections and Environments.
+You can keep the `*-local.json` and change just **filename** and **path** as you debug.
+
+For local development `serverless-offline` plugin is used, in order to use it you first need to [Deploy](#how-to-deploy) it. After the deploy succeeds, you can run `sls offline --stage <YOUR_STAGE>` or from NPM `npm run offline:<YOUR_STAGE>` and use Thunder or Postman against the `local` Collection.
 
 ## How to Deploy
 
----
 To deploy the app you can either use `sls deploy --stage <YOUR_STAGE>` if you have Serverless installed Globally, or use the NPN script desired you can find in `package.json`, ex `npm run deploy:dev` will deploy on **dev** environment.
+
+First deploy is going to take a bit longer, future redeploys will end faster. If an error is returned while deploying, before swearing, you can check you stack in `AWS CloudFormation`, under events there is a remote chance to find something useful.
+If this doesn't help feel free to open an issue 😁
+
+If you plan to debug your remote environments (dev, staging, prod) you can use the **Thunder** and **Postman** Collections with the `*-prod.json` environment.
+Just make sure to adjust the values for the env variables before.
 
 ## Differences from Venveo's service
 
----
 There are some differences that have been implemented differently from the inspired solution, some features have been fixed, other improved and other cut.
 #### Improvements
 - Switched from Object Oriented to Functional programming paradigm
@@ -266,7 +275,7 @@ There are some differences that have been implemented differently from the inspi
 #### TODO
 What needs to be adressed in the near future:
 - Support as many query params as possible mapped from [Sharp](https://sharp.pixelplumbing.com/api-operation) including the `format=` parameter to return custom formats
-- Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site
+- Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
 - Test the security `s=""` query parameter or change it with another solution
 - Review security and `binaryMediaTypes` from API Gateway to disallow certain file types to be uploaded/served
 - Solve bugs within the image processing, such as the size being larger than the original with `q=70` or higher
@@ -276,10 +285,10 @@ What needs to be adressed in the near future:
 
 ## Consume The Service Client Side
 
----
-lorem
+WIP
 
 ## Limits
 
----
-lorem
+Many limits are still unknown due to the early life of the project, this thing was just born 😅
+- There is a limit of 10Mb max for payloads on the POST route, meaning you can't upload 50 images at once unless they're thumbnails
+- Still breaking thing, will update as soon as something happens...
