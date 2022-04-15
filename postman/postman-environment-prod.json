@@ -1,0 +1,33 @@
+{
+	"id": "d26b98d7-b9de-49a1-b672-64b0a02d6f46",
+	"name": "prod",
+	"values": [
+		{
+			"key": "domain",
+			"value": "domain.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "path",
+			"value": "random/path",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "filename",
+			"value": "image.jpg",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "protocol",
+			"value": "https",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2022-04-15T12:05:09.826Z",
+	"_postman_exported_using": "Postman/9.15.2"
+}

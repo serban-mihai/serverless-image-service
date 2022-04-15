@@ -1,0 +1,12 @@
+{
+  "client": "Thunder Client",
+  "environmentName": "prod",
+  "dateExported": "2022-04-15T11:04:32.175Z",
+  "version": "1.0",
+  "variables": [
+    { "name": "domain", "value": "domain.com" },
+    { "name": "path", "value": "random/path" },
+    { "name": "filename", "value": "image.jpg" },
+    { "name": "protocol", "value": "https" }
+  ]
+}

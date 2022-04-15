@@ -21,8 +21,8 @@ exports.handler = async (event, context) => {
     const originalImage = await getOriginalImage(bucket, path);
     const edits = event.queryStringParameters;
 
-    // TODO: Play with CloudFront Multiple Origins to serve requests without
-    // TODO: query parameters directly from S3, avoiding useless Lambda triggers
+    // TODO: Find a way to serve requests without query parameters directly
+    // TODO: from S3, avoiding useless Lambda triggers
     // There is no query param for image manipulaiton, return the original image
     if (!edits) {
       const response = parseResponse(context, originalImage);

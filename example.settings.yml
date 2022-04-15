@@ -11,30 +11,30 @@ stages:
   dev:
     <<: *defaults
     bucketPolicy: ${file("./example-s3-bucket-policy.json")} # Path to bucket policy example
-    corsOrigin: "https://" # CORS Origin for POST and DELETE methods
+    corsOrigin: "https://domain.com" # CORS Origin for POST and DELETE methods
     environment:
       <<: *defaults.environment
-      SOURCE_BUCKET: "" # ? Must be the same as below
-      CUSTOM_DOMAIN: "" # ? Must be the same as above
+      SOURCE_BUCKET: "domain.com" # ? Must be the same as below
+      CUSTOM_DOMAIN: "domain.com" # ? Must be the same as above
       SECURITY_KEY: "" # A string to be used to unhash securty requests, disabled if leaved empty
       ACM_CERTIFICATE_ARN: ""
   staging:
     <<: *defaults
     bucketPolicy: ${file("./example-s3-bucket-policy.json")} # Path to bucket policy example
-    corsOrigin: "https://" # CORS Origin for POST and DELETE methods
+    corsOrigin: "https://domain.com" # CORS Origin for POST and DELETE methods
     environment:
       <<: *defaults.environment
-      SOURCE_BUCKET: "" # ? Must be the same as below
-      CUSTOM_DOMAIN: "" # ? Must be the same as above
+      SOURCE_BUCKET: "domain.com" # ? Must be the same as below
+      CUSTOM_DOMAIN: "domain.com" # ? Must be the same as above
       SECURITY_KEY: "" # A string to be used to unhash securty requests, disabled if leaved empty
       ACM_CERTIFICATE_ARN: ""
   prod:
     <<: *defaults
     bucketPolicy: ${file("./example-s3-bucket-policy.json")} # Path to bucket policy example
-    corsOrigin: "https://" # CORS Origin for POST and DELETE methods
+    corsOrigin: "https://domain.com" # CORS Origin for POST and DELETE methods
     environment:
       <<: *defaults.environment
-      SOURCE_BUCKET: "" # ? Must be the same as below
-      CUSTOM_DOMAIN: "" # ? Must be the same as above
+      SOURCE_BUCKET: "domain.com" # ? Must be the same as below
+      CUSTOM_DOMAIN: "domain.com" # ? Must be the same as above
       SECURITY_KEY: "" # A string to be used to unhash securty requests, disabled if leaved empty
       ACM_CERTIFICATE_ARN: ""

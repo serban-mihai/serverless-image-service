@@ -1,0 +1,94 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "serverless-image-service",
+  "dateExported": "2022-04-15T10:59:17.062Z",
+  "version": "1.1",
+  "folders": [],
+  "requests": [
+    {
+      "_id": "c654c55a-a410-481f-97bd-5c5d208d8bd2",
+      "colId": "841c4446-8616-4707-b823-fda1cba8d625",
+      "containerId": "",
+      "name": "Get Original Image",
+      "url": "{{protocol}}://{{domain}}/{{path}}/{{filename}}",
+      "method": "GET",
+      "sortNum": 10000,
+      "created": "2022-04-15T09:26:41.268Z",
+      "modified": "2022-04-15T10:31:14.822Z",
+      "headers": [],
+      "params": [],
+      "tests": []
+    },
+    {
+      "_id": "597b16e7-79cf-48bf-a131-05f37fbade0b",
+      "colId": "841c4446-8616-4707-b823-fda1cba8d625",
+      "containerId": "",
+      "name": "Get Processed Image",
+      "url": "{{protocol}}://{{domain}}/{{path}}/{{filename}}?w=500&h=350&q=50",
+      "method": "GET",
+      "sortNum": 20000,
+      "created": "2022-04-15T10:04:09.889Z",
+      "modified": "2022-04-15T10:31:19.487Z",
+      "headers": [],
+      "params": [
+        { "name": "w", "value": "500", "isPath": false },
+        { "name": "h", "value": "350", "isPath": false },
+        { "name": "q", "value": "50", "isPath": false }
+      ],
+      "tests": []
+    },
+    {
+      "_id": "5d52dc56-2e23-4c01-9bcf-e6bf7ab1c364",
+      "colId": "841c4446-8616-4707-b823-fda1cba8d625",
+      "containerId": "",
+      "name": "Upload Image",
+      "url": "{{protocol}}://{{domain}}/{{path}}",
+      "method": "POST",
+      "sortNum": 22500,
+      "created": "2022-04-15T10:07:16.451Z",
+      "modified": "2022-04-15T10:58:37.045Z",
+      "headers": [{ "name": "Content-Type", "value": "multipart/form-data" }],
+      "params": [],
+      "body": {
+        "type": "formdata",
+        "raw": "",
+        "form": [],
+        "files": [
+          { "name": "data", "value": "/path/to/image.jpg" },
+          { "name": "data", "value": "/path/to/image-second.png" },
+          { "name": "data", "value": "/path/to/image-third.webp" }
+        ]
+      },
+      "tests": []
+    },
+    {
+      "_id": "e52090cb-0b53-4eb6-b47d-ad49c64e6fd1",
+      "colId": "841c4446-8616-4707-b823-fda1cba8d625",
+      "containerId": "",
+      "name": "Remove Image",
+      "url": "{{protocol}}://{{domain}}/{{path}}/{{filename}}",
+      "method": "DELETE",
+      "sortNum": 25000,
+      "created": "2022-04-15T10:08:21.093Z",
+      "modified": "2022-04-15T10:31:30.223Z",
+      "headers": [],
+      "params": [],
+      "tests": []
+    },
+    {
+      "_id": "9d4d903e-0523-4bb2-8edf-23aa0bd46039",
+      "colId": "841c4446-8616-4707-b823-fda1cba8d625",
+      "containerId": "",
+      "name": "List Images",
+      "url": "{{protocol}}://{{domain}}",
+      "method": "GET",
+      "sortNum": 35000,
+      "created": "2022-04-15T10:26:32.206Z",
+      "modified": "2022-04-15T10:31:48.224Z",
+      "headers": [],
+      "params": [],
+      "tests": []
+    }
+  ],
+  "settings": { "headers": [], "tests": [] }
+}

@@ -1,0 +1,12 @@
+{
+  "client": "Thunder Client",
+  "environmentName": "local",
+  "dateExported": "2022-04-15T11:03:13.438Z",
+  "version": "1.0",
+  "variables": [
+    { "name": "domain", "value": "localhost:8004" },
+    { "name": "path", "value": "random/path" },
+    { "name": "filename", "value": "image.jpg" },
+    { "name": "protocol", "value": "http" }
+  ]
+}

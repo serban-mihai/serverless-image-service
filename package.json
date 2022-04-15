@@ -20,7 +20,6 @@
     "deploy:dev": "sls deploy --stage dev",
     "deploy:staging": "sls deploy --stage staging",
     "deploy:prod": "sls deploy --stage prod"
-    
   },
   "version": "1.0.1",
   "private": false,
@@ -29,7 +28,7 @@
     "aws-sdk": "^2.668.0",
     "aws-sdk-mock": "^5.1.0",
     "serverless": "^3.13.0",
-    "serverless-offline": "^8.5.0",
+    "serverless-offline": "^8.7.0",
     "sharp": "0.28.0",
     "standard": "^16.0.3"
   }
