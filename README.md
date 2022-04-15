@@ -122,7 +122,7 @@ For some codec and config reasons, some formats that are applied `q=70` or highe
 **It responds with:**
 - 🟢 Success:
  
-<kbd><img src="https://images.unsplash.com/photo-1616007211778-ab0921a264e8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80" width="350px" style="border-radius: 0.5rem; margin-top: 10px; margin-bottom: 10px"></kbd>
+<kbd><img src="https://images.unsplash.com/photo-1616007211778-ab0921a264e8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=350&q=80" width="350px" style="border-radius: 0.5rem; margin-left: 25px; margin-top: 10px; margin-bottom: 10px"></kbd>
   
 - 🔴 Error:
   ```
@@ -138,7 +138,7 @@ Uploads one or many images to a specific path inside an **S3 Bucket**. Once prov
 
 Note that this endpoint is supposed to receive a `Content-Type: multipart/form-data` payload format to work but this depends on the library or tool you use to make the request.
 If using `fetch` or [Thunder](https://www.thunderclient.com/) for example you won't have to add the `Content-Type` header at all, since they handle the situation in the background, the header itself also contains a boundary that is used to mark the beginning and the end of the payload, as well as distinguish the various files, or parts, which it's composed of.
-You'll still have to pass a **binary** of `multipart/data-form` as body on your request though.
+You'll still have to pass a **binary** of `multipart/form-data` as body on your request though.
 
 The structure of the payload on the client-side looks like this:
 ```
@@ -149,12 +149,12 @@ The structure of the payload on the client-side looks like this:
   data: ...
 }
 ```
-The key for the `multipart/data-form` has to **always** be `data` because other metadata such as name and extension are already contained within the ImageBuffer that is in this case the binary representation of the image we want to upload, and they will be parsed back by Lambda once received in a correct form.
+The key for the `multipart/form-data` has to **always** be `data` because other metadata such as name and extension are already contained within the ImageBuffer that is in this case the binary representation of the image we want to upload, and they will be parsed back by Lambda once received in a correct form.
 
 There are many ways to construct a valid payload compatible but it differs from the client App and its libraries.
 > An example with **React/Next.js** is provided in the [related paragraph](#consume-the-service-client-side)
 
-The raw data, once reaches Lambda, due to API Gateway [policy](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-payload-encodings-workflow.html), it **forcefully encodes** the request body into `base64`, forcing Lambda to **decode it back** into `binary` if we want to parse it further from it's `multipart/data-form` format.
+The raw data, once reaches Lambda, due to API Gateway [policy](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-payload-encodings-workflow.html), it **forcefully encodes** the request body into `base64`, forcing Lambda to **decode it back** into `binary` if we want to parse it further from it's `multipart/form-data` format.
 I still haven't found a hack for this, avoiding useless data transformation would be ideal since it would be less prone to bad parsing.
 
 Once the data gets parsed, it's directly written on the **S3 Bucket** from the **Buffer** within the RAM, without being written on Lambda's ephemeral storage first.
@@ -199,7 +199,7 @@ Once the data gets parsed, it's directly written on the **S3 Bucket** from the *
   ```
 
 #### DELETE - Remove Image
-Gets a list of all the images in the **S3 Bucket** (currently limited to 1000 keys). It has been designed for debugging purposes only, but can be extended to list subpaths as well as being so integrated into CMS workflow.
+Removes the image that corresponds to the key (path + filename) provided with the request. It can delete just one file per call, if the key isn't available will throw an error, if the file has been deleted will return a successful message.
 
 **It responds with:**
 - 🟢 Success: 
