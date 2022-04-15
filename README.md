@@ -10,6 +10,7 @@ The advantages of having your custom solution are flexibility, lower costs, and 
   - [Table of Content](#table-of-content)
   - [About](#about)
     - [Public S3 Bucket](#public-s3-bucket)
+    - [Caching Strategy](#caching-strategy)
     - [Routes](#routes)
       - [GET - List Images](#get---list-images)
       - [GET - Get Image](#get---get-image)
@@ -23,8 +24,9 @@ The advantages of having your custom solution are flexibility, lower costs, and 
   - [Differences from Venveo's service](#differences-from-venveos-service)
       - [Improvements](#improvements)
       - [TODO](#todo)
-  - [Consume The Service Client-Side](#consume-the-service-client-side)
+  - [Consuming The Service Client-Side](#consuming-the-service-client-side)
   - [Limits](#limits)
+  - [How to Contribute](#how-to-contribute)
 
 ## About
 
@@ -45,6 +47,13 @@ PublicAccessBlockConfiguration:
     RestrictPublicBuckets: false
 ``` 
 Alternatively, you can comment just the first 2 lines to disable Static Hosting and change the remaining values to be `true`
+
+### Caching Strategy
+The only CDN solution offered by this service is `AWS CloudFront`, which serves as **Caching** place for avoiding useless stress on `Lambda` in case of high traffic aka. many requests at once, `Lambda`'s free tier might be generous with 1M requests/month free, but why waste them? 
+If you have access to an external CDN that can also **Cache** content from the Origin then it would be a good idea to register your `CloudFront` distribution as **Proxy** to a DNS and Cache there as well successful responses.
+
+Depending on costs on both sides and overall traffic, by using this strategy you could easily use the entire solution for free!
+More about this in my [article](https://serbanmihai.com/quests/serverless-image-service#) 
 
 ### Routes
 | Method   | Route     | Description                                                                       | Content-Type In                         | Content-Type Out                | CORS            | Cache     | Lambda                         |
@@ -121,8 +130,7 @@ For some codec and config reasons, some formats that are applied `q=70` or highe
  
 **It responds with:**
 - 🟢 Success:
- 
-<kbd><img src="https://images.unsplash.com/photo-1616007211778-ab0921a264e8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=350&q=80" width="350px" style="border-radius: 0.5rem; margin-left: 25px; margin-top: 10px; margin-bottom: 10px"></kbd>
+- <p align="left"><img src="https://images.unsplash.com/photo-1616007211778-ab0921a264e8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=350&q=80" width="350px"></p>
   
 - 🔴 Error:
   ```
@@ -282,12 +290,61 @@ What needs to be addressed soon:
 - Establish an efficient CLI Rollback of CloudFormation Stack from Serverless, it breaks because buckets related are not empty before removed
 - Introduce Unit Tests back
 
-## Consume The Service Client-Side
+## Consuming The Service Client-Side
 
-WIP
+On the client-side, the App needs to communicate with the service through any library that can send HTTP requests, while most endpoints are pretty straight forward there is one, in particular, that needs more work to make it work properly, the **Upload Image POST**
+As described [above](#post---upload-images) needs to receive a POST request with a `binary multipart/form-data` body. Every framework/library has different ways to pack such an object, I'll show how I do it using **React/Next.js** and the `fetch` library.
+
+```
+import { useRef } from "react"
+
+const App = () => {
+  const form = useRef(null);
+
+  const postImage = async (e) => {
+    e.preventDefault();
+    const data = new FormData(form.current);
+    const options = {
+      method: "POST",
+      body: data,
+    };
+    const res = await fetch("https://domain.com/random/path", options);
+    const loaded = await res.json();
+    console.log(loaded);
+  };
+
+  return(
+    <div>
+      <form
+        ref={form}
+        encType="multipart/form-data"
+        onSubmit={postImage}
+      >
+        <input
+          multiple
+          type="file"
+          placeholder="Upload"
+          name="data"
+          onChange={changeHandler}
+        />
+        <input
+          type="submit"
+          value="Post"
+        />
+      </form>
+    </div>
+  )
+}
+```
+The `FormData` is the interface you should be targetting when packing an object that contains the images you want to send over to be uploaded.
+
+Most of the time you won't need to include any `Content-Type` header into the request, libraries know how to attach it automatically because the full header for such a request in its full form would look something like this `multipart/form-data; boundary=---------------------------157259096020916242283640002646`. That `boundary` is the separator between each object in the request, each image in our case. It generates when a `FormData` is created and the service is parsing this once the request gets to `Lambda`, and since you don't have to worry about it before sending the request, that's a win from both sides!
 
 ## Limits
 
 Many limits are still unknown due to the early life of the project, this thing was just born 😅
 - There is a limit of 10Mb max for payloads on the POST route, meaning you can't upload 50 images at once unless they're thumbnails
 - I'm still breaking things, will update as soon as something happens...
+
+## How to Contribute
+If you want to contribute to the project just clone it, move to a branch with a simple naming convention `with-this-format` and push your branch, then open me a PR with some information about your changes and I'll take a look.
