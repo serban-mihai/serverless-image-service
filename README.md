@@ -22,8 +22,8 @@ The advantages of having your custom solution are flexibility, lower costs, and 
   - [Local Development](#local-development)
   - [How to Deploy](#how-to-deploy)
   - [Differences from Venveo's service](#differences-from-venveos-service)
-      - [Improvements](#improvements)
-      - [TODO](#todo)
+    - [Improvements](#improvements)
+    - [TODO](#todo)
   - [Consuming The Service Client-Side](#consuming-the-service-client-side)
   - [Limits](#limits)
   - [How to Contribute](#how-to-contribute)
@@ -56,12 +56,12 @@ Depending on costs on both sides and overall traffic, by using this strategy you
 More about this in my [article](https://serbanmihai.com/quests/serverless-image-service#) 
 
 ### Routes
-| Method   | Route     | Description                                                                       | Content-Type In                         | Content-Type Out                | CORS            | Cache     | Lambda                         |
-| -------- | --------- | --------------------------------------------------------------------------------- | --------------------------------------- | ------------------------------- | --------------- | --------- | ------------------------------ |
-| `GET`    | `/`       | List the S3 Bucket keys currently stored from the root, limit of 1000             | `not-required`                          | `application/json`              | `none`          | `none`    | `image-service-<stage>-list`   |
-| `GET`    | `/{any+}` | Get the image by the S3 key provided, process it if valid query params are passed | `not-required`                          | `image/*` or `application/json` | `none`          | `2592000` | `image-service-<stage>-get`    |
-| `POST`   | `/{any+}` | Put one or many static assets under the S3 key provided                           | `multipart/form-data` or `not-required` | `application/json`              | `CUSTOM_DOMAIN` | `none`    | `image-service-<stage>-post`   |
-| `DELETE` | `/{any+}` | Remove the static asset by the S3 key provided                                    | `not-required`                          | `application/json`              | `CUSTOM_DOMAIN` | `none`    | `image-service-<stage>-delete` |
+| Method   | Route     | Description                            | Content-Type In                         | Content-Type Out                | CORS            | Cache     | Lambda                         |
+| -------- | --------- | -------------------------------------- | --------------------------------------- | ------------------------------- | --------------- | --------- | ------------------------------ |
+| `GET`    | `/`       | [List Images](#get---list-images)      | `not-required`                          | `application/json`              | `none`          | `none`    | `image-service-<stage>-list`   |
+| `GET`    | `/{any+}` | [Get Image](#get---get-image)          | `not-required`                          | `image/*` or `application/json` | `none`          | `2592000` | `image-service-<stage>-get`    |
+| `POST`   | `/{any+}` | [Upload Images](#post---upload-images) | `multipart/form-data` or `not-required` | `application/json`              | `CUSTOM_DOMAIN` | `none`    | `image-service-<stage>-post`   |
+| `DELETE` | `/{any+}` | [Remove Image](#delete---remove-image) | `not-required`                          | `application/json`              | `CUSTOM_DOMAIN` | `none`    | `image-service-<stage>-delete` |
 
 #### GET - List Images
 Gets a list of all the images in the **S3 Bucket** (currently limited to 1000 keys). It has been designed for **debugging purposes only**, but can be extended to list subpaths as well as being so integrated into CMS workflows.
@@ -92,6 +92,9 @@ Gets a list of all the images in the **S3 Bucket** (currently limited to 1000 ke
       "ChecksumAlgorithm": [],
       "Size": 1599028,
       "StorageClass": "STANDARD"
+    },
+    {
+      ...
     }
   ]
   ```
@@ -160,7 +163,7 @@ The structure of the payload on the client-side looks like this:
 The key for the `multipart/form-data` has to **always** be `data` because other metadata such as name and extension are already contained within the ImageBuffer that is in this case the binary representation of the image we want to upload, and they will be parsed back by Lambda once received in a correct form.
 
 There are many ways to construct a valid payload compatible but it differs from the client App and its libraries.
-> An example with **React/Next.js** is provided in the [related paragraph](#consume-the-service-client-side)
+> An example with **React/Next.js** is provided in the [related paragraph](#consuming-the-service-client-side)
 
 The raw data, once reaches Lambda, due to API Gateway [policy](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-payload-encodings-workflow.html), it **forcefully encodes** the request body into `base64`, forcing Lambda to **decode it back** into `binary` if we want to parse it further from it's `multipart/form-data` format.
 I still haven't found a hack for this, avoiding useless data transformation would be ideal since it would be less prone to bad parsing.
@@ -186,6 +189,9 @@ Once the data gets parsed, it's directly written on the **S3 Bucket** from the *
       {
         "link": "https://domain.com/path/image-third.webp",
         "ETag": "thirdtimageetagrandomhsh98765432"
+      },
+      {
+        ...
       }
     ]
   }
@@ -202,7 +208,7 @@ Once the data gets parsed, it's directly written on the **S3 Bucket** from the *
   {
     "status": 409,
     "code": "already-exists",
-    "message": "Images [ image.jpg, image-second.png ] already exist within the requested path /random/path"
+    "message": "Images [ image.jpg, image-second.png, ... ] already exist within the requested path /random/path"
   }
   ```
 
@@ -266,7 +272,7 @@ Just make sure to adjust the values for the env variables before.
 ## Differences from Venveo's service
 
 Along with the edits to almost all the code structure, there are still a couple of things unchanged such as the security chunk.
-#### Improvements
+### Improvements
 - Switched from Object-Oriented to Functional programming paradigm
 - Updated dependencies and Serverless version to V3
 - Removed deprecated code on both Node and Serverless sides
@@ -279,10 +285,11 @@ Along with the edits to almost all the code structure, there are still a couple 
 - Added Thunder Client and Postman Collections for easy debugging
 - Removed Tests
 
-#### TODO
+### TODO
 What needs to be addressed soon:
 - Support as many query params as possible mapped from [Sharp](https://sharp.pixelplumbing.com/api-operation) including the `format=` parameter to return custom formats
 - Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
+- Personal favourite, add watermark with custom position and size, can be achieved with [compositing](https://sharp.pixelplumbing.com/api-composite)
 - Test the security `s=""` query parameter or change it with another solution
 - Review security and `binaryMediaTypes` from API Gateway to disallow certain file types to be uploaded/served
 - Solve bugs within the image processing, such as the size being larger than the original with `q=70` or higher

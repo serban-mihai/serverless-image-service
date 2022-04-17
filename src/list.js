@@ -45,7 +45,7 @@ const parseResponse = (context, list, status = 200) => {
     "Access-Control-Allow-Methods": "GET",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Allow-Credentials": true,
-    "Access-Control-Allow-Origin": "*", // TODO: Can be changed with https://domain.com
+    "Access-Control-Allow-Origin": "*", // TODO: Can be changed with https://consumer-domain.com
     "Last-Modified": timenow.toString(),
     "Content-Type": "application/json",
   };
