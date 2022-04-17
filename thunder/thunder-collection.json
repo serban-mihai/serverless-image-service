@@ -33,7 +33,8 @@
       "params": [
         { "name": "w", "value": "500", "isPath": false },
         { "name": "h", "value": "350", "isPath": false },
-        { "name": "q", "value": "50", "isPath": false }
+        { "name": "q", "value": "50", "isPath": false },
+        { "name": "fm", "value": "webp", "isPath": false }
       ],
       "tests": []
     },

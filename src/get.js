@@ -1,6 +1,7 @@
 const { beforeHandleRequest } = require("./helpers/security");
 const { getSetting } = require("./helpers/settings");
 const { getOriginalImage, parseImageKey } = require("./helpers/bucket");
+const { formats } = require("./lib/formats");
 const sharp = require("sharp");
 
 exports.handler = async (event, context) => {
@@ -23,7 +24,7 @@ exports.handler = async (event, context) => {
 
     // TODO: Find a way to serve requests without query parameters directly
     // TODO: from S3, avoiding useless Lambda triggers
-    // There is no query param for image manipulaiton, return the original image
+    // There is no query param for image manipulation, return the original image
     if (!edits) {
       const response = parseResponse(context, originalImage);
       return response;
@@ -34,26 +35,39 @@ exports.handler = async (event, context) => {
     const { format, size, width, height, hasAlpha } =
       await sharpObject.metadata();
 
+    // TODO: Move below block into a separate function in utils to avoid confusion and bloating
     // Parse query parameters to their type values (besides the s query param)
     const defaultQuality = getSetting("DEFAULT_QUALITY");
     const q = edits.hasOwnProperty("q") ? parseInt(edits.q) : defaultQuality;
     const w = edits.hasOwnProperty("w") ? parseInt(edits.w) : undefined;
     const h = edits.hasOwnProperty("h") ? parseInt(edits.h) : undefined;
+    let fm = edits.hasOwnProperty("fm") ? edits.fm : format;
 
+    // If the format is not supported, bad spelled or mispelled return the original format
+    if (!formats.includes(fm)) {
+      fm = format;
+    }
+
+    // TODO: Move below block into a separate function in utils to avoid confusion and bloating
     // Quality and some file specifics options for the image processing
     const options = {
       quality: q,
+      effort: 1, // ! Not available for some formats, need to check if it might break anything
     };
-    if (format === "png") {
-      options["compressionLevel"] = 9;
-      options["palette"] = true;
+    switch (fm) {
+      case "png":
+        options["compressionLevel"] = 9;
+        options["palette"] = true;
+      case "webm":
+      case "avif": // ? Returns Content-Type: image/heif conversion takes ages and the image size is hudge
+        options["lossless"] = true;
     }
 
     // Applying edits
     const { data, info } = await sharpObject
       .resize(w, h, { withoutEnlargement: true })
       .withMetadata()
-      .toFormat(format, options)
+      .toFormat(fm, options)
       .toBuffer({ resolveWithObject: true });
 
     // ? A glitch is making some images to increase in size if processed
