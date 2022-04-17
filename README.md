@@ -121,7 +121,7 @@ Currently, the following query parameters are supported:
 - `w=Number`: A positive number of **px** that represents the new **width** which the image is requested to scale at
 - `h=Number`: A positive number of **px** that represents the new **height** which the image is requested to scale at 
 - `q=Number`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
-- `fm=String`: The name of the format you want to convert the original image. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`,`webp`,`gif`,`jp2`,`tiff`,`avif`,`heif`,`raw`,`tile`,
+- `fm=String`: The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`,`webp`,`gif`,`jp2`,`tiff`,`avif`,`heif`,`raw`,`tile`,
 
 Since these parameters can be chained into one request, their actions need to coexist in the final image. Some rules apply when for example you get both `w` and `h` in the same request, or when you have just one of them but also `q`
 > Order doesn't matter between Query Parameters
