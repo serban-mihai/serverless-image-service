@@ -54,6 +54,11 @@
 							"key": "q",
 							"value": "50",
 							"description": "Image's new quality"
+						},
+						{
+							"key": "fm",
+							"value": "webm",
+							"description": "Image's new format"
 						}
 					]
 				}
