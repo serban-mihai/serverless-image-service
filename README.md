@@ -122,6 +122,7 @@ Currently, the following query parameters are supported:
 - `h=Number`: A positive number of **px** that represents the new **height** which the image is requested to scale at 
 - `q=Number`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
 - `fm=String`: The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
+- `ll=Boolean`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.   
 
 Since these parameters can be chained into one request, their actions need to coexist in the final image. Some rules apply when for example you get both `w` and `h` in the same request, or when you have just one of them but also `q`
 > Order doesn't matter between Query Parameters
@@ -132,7 +133,7 @@ Since these parameters can be chained into one request, their actions need to co
 - `/path/image.jpg?w=500&h=100`: Unless the values provided are not complementary related to the originals, this will crop `image.jpg` to be **500px width** and **100px height**. If any of the values is bigger than its original counterpart resize is skipped and the original image is returned
 - `/path/image.jpg?q=57`: This will reduce the **quality** of `image.jpg` by **43%** before returning it. No scaling is applied
 - `/path/image.jpg?w=250&q=30`: For last, it will attempt to scale down `image.jpg` to **250px width** (with height proportionally scaled-down as well) and then reduce the quality of the scaled image by **70%**
-- `/path/image.jpg?w=100&fm=webp`: Resizes `image.jpg` to **100px width** with proportional height and converts it to be in `webp` format, which reduces a lot the final size and it's **lossless** by default.
+- `/path/image.jpg?w=100&fm=webp&ll=true`: Resizes `image.jpg` to **100px width** with proportional height and converts it to be in `webp` format, enabling **lossless** convertion.
 
 For some codec and config reasons, some formats that are applied `q=70` or higher, output a bigger size image than the original.
 > `GET` https://domain.com/random/path/image.jpg
