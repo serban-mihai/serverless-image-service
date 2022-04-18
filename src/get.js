@@ -51,7 +51,7 @@ exports.handler = async (event, context) => {
     // TODO: Move below block into a separate function in utils to avoid confusion and bloating
     // Quality and some file specifics options for the image processing
     const options = {
-      quality: q,
+      quality: q <= 70 ? q : 70, // ? Default to 70 until size bug is fixed
       effort: 1, // ! Not available for some formats, need to check if it might break anything
     };
     switch (fm) {
