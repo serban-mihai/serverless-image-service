@@ -1,144 +1,128 @@
 {
-	"info": {
-		"_postman_id": "68631b58-1dc6-4089-a282-cc802aac55fb",
-		"name": "serverless-image-service",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Get Original Image",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{protocol}}://{{domain}}/{{path}}/{{filename}}",
-					"protocol": "{{protocol}}",
-					"host": [
-						"{{domain}}"
-					],
-					"path": [
-						"{{path}}",
-						"{{filename}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Processed Image",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{protocol}}://{{domain}}/{{path}}/{{filename}}?w=500&h=350&q=50",
-					"protocol": "{{protocol}}",
-					"host": [
-						"{{domain}}"
-					],
-					"path": [
-						"{{path}}",
-						"{{filename}}"
-					],
-					"query": [
-						{
-							"key": "w",
-							"value": "500",
-							"description": "Image's new width"
-						},
-						{
-							"key": "h",
-							"value": "350",
-							"description": "Image's new height"
-						},
-						{
-							"key": "q",
-							"value": "50",
-							"description": "Image's new quality"
-						},
-						{
-							"key": "fm",
-							"value": "webm",
-							"description": "Image's new format"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Upload Image",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "data",
-							"description": "Load a JPEG from your localhost",
-							"type": "file",
-							"src": "/home/mihai/image.jpg"
-						},
-						{
-							"key": "data",
-							"description": "Load a PNG from your localhost",
-							"type": "file",
-							"src": "/home/mihai/image-second.png"
-						},
-						{
-							"key": "data",
-							"description": "Load a WEBP from your localhost",
-							"type": "file",
-							"src": "/home/mihai/image-third.webp"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{protocol}}://{{domain}}/{{path}}",
-					"protocol": "{{protocol}}",
-					"host": [
-						"{{domain}}"
-					],
-					"path": [
-						"{{path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Remove Image",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{protocol}}://{{domain}}/{{path}}/{{filename}}",
-					"protocol": "{{protocol}}",
-					"host": [
-						"{{domain}}"
-					],
-					"path": [
-						"{{path}}",
-						"{{filename}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "List Images",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{protocol}}://{{domain}}",
-					"protocol": "{{protocol}}",
-					"host": [
-						"{{domain}}"
-					]
-				}
-			},
-			"response": []
-		}
-	]
+  "info": {
+    "_postman_id": "68631b58-1dc6-4089-a282-cc802aac55fb",
+    "name": "serverless-image-service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Original Image",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{protocol}}://{{domain}}/{{path}}/{{filename}}",
+          "protocol": "{{protocol}}",
+          "host": ["{{domain}}"],
+          "path": ["{{path}}", "{{filename}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Processed Image",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{protocol}}://{{domain}}/{{path}}/{{filename}}?w=500&h=350&q=50",
+          "protocol": "{{protocol}}",
+          "host": ["{{domain}}"],
+          "path": ["{{path}}", "{{filename}}"],
+          "query": [
+            {
+              "key": "w",
+              "value": "500",
+              "description": "Image's new width"
+            },
+            {
+              "key": "h",
+              "value": "350",
+              "description": "Image's new height"
+            },
+            {
+              "key": "q",
+              "value": "50",
+              "description": "Image's new quality"
+            },
+            {
+              "key": "fm",
+              "value": "webm",
+              "description": "Image's new format"
+            },
+            {
+              "key": "ll",
+              "value": "false",
+              "description": "Enables Lossless compression when possible"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Upload Image",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "data",
+              "description": "Load a JPEG from your localhost",
+              "type": "file",
+              "src": "/home/mihai/image.jpg"
+            },
+            {
+              "key": "data",
+              "description": "Load a PNG from your localhost",
+              "type": "file",
+              "src": "/home/mihai/image-second.png"
+            },
+            {
+              "key": "data",
+              "description": "Load a WEBP from your localhost",
+              "type": "file",
+              "src": "/home/mihai/image-third.webp"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{protocol}}://{{domain}}/{{path}}",
+          "protocol": "{{protocol}}",
+          "host": ["{{domain}}"],
+          "path": ["{{path}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Remove Image",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{protocol}}://{{domain}}/{{path}}/{{filename}}",
+          "protocol": "{{protocol}}",
+          "host": ["{{domain}}"],
+          "path": ["{{path}}", "{{filename}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Images",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{protocol}}://{{domain}}",
+          "protocol": "{{protocol}}",
+          "host": ["{{domain}}"]
+        }
+      },
+      "response": []
+    }
+  ]
 }
