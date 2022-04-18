@@ -1,8 +1,10 @@
 const { beforeHandleRequest } = require("./helpers/security");
 const { getSetting } = require("./helpers/settings");
 const { getOriginalImage, parseImageKey } = require("./helpers/bucket");
-const { formats } = require("./lib/formats");
+const { parseQueryParams } = require("./helpers/queryParams");
 const sharp = require("sharp");
+const fs = require("fs");
+const { join } = require("path");
 
 exports.handler = async (event, context) => {
   const beforeHandle = beforeHandleRequest(event);
@@ -20,61 +22,49 @@ exports.handler = async (event, context) => {
     const bucket = getSetting("SOURCE_BUCKET");
     const path = parseImageKey(event.path);
     const originalImage = await getOriginalImage(bucket, path);
-    const edits = event.queryStringParameters;
 
     // TODO: Find a way to serve requests without query parameters directly
     // TODO: from S3, avoiding useless Lambda triggers
     // There is no query param for image manipulation, return the original image
-    if (!edits) {
+    if (!event.queryStringParameters) {
       const response = parseResponse(context, originalImage);
       return response;
     }
 
     // Query params detected, making transforms over the original image
     const sharpObject = sharp(originalImage.Body);
-    const { format, size, width, height, hasAlpha } =
-      await sharpObject.metadata();
+    const metadata = await sharpObject.metadata();
 
-    // TODO: Move below block into a separate function in utils to avoid confusion and bloating
-    // Parse query parameters to their type values (besides the s query param)
-    const defaultQuality = getSetting("DEFAULT_QUALITY");
-    const q = edits.hasOwnProperty("q") ? parseInt(edits.q) : defaultQuality;
-    const w = edits.hasOwnProperty("w") ? parseInt(edits.w) : undefined;
-    const h = edits.hasOwnProperty("h") ? parseInt(edits.h) : undefined;
-    let fm = edits.hasOwnProperty("fm") ? edits.fm : format;
+    // Filter, sanitize and parse incoming query params
+    const { edits, options } = parseQueryParams(
+      event.queryStringParameters,
+      metadata
+    );
+    const { w, h, fm, wm, gr } = edits;
 
-    // If the format is not supported, bad spelled or mispelled return the original format
-    if (!formats.includes(fm)) {
-      fm = format;
-    }
-
-    // TODO: Move below block into a separate function in utils to avoid confusion and bloating
-    // Quality and some file specifics options for the image processing
-    const options = {
-      quality: q <= 70 ? q : 70, // ? Default to 70 until size bug is fixed
-      effort: 1, // ! Not available for some formats, need to check if it might break anything
-    };
-    switch (fm) {
-      case "png":
-        options["compressionLevel"] = 6;
-        options["palette"] = true;
-      case "webm":
-      case "avif": // ? Returns Content-Type: image/heif conversion takes ages and the image size is hudge
-        options["lossless"] = true;
-    }
-
-    // Applying edits
-    const { data, info } = await sharpObject
+    // Applying resize, original metadata for rotation and converting to a custom format
+    await sharpObject
       .resize(w, h, { withoutEnlargement: true })
       .withMetadata()
-      .toFormat(fm, options)
-      .toBuffer({ resolveWithObject: true });
+      .toFormat(fm, options);
+
+    // If the Watermark param is set, apply it over the image along with the gravity position
+    if (wm) {
+      await sharpObject.composite([
+        { input: `${__dirname}/assets/${wm}`, gravity: gr },
+      ]);
+    }
+
+    // Get the buffer and metadata from the processed image
+    const { data, info } = await sharpObject.toBuffer({
+      resolveWithObject: true,
+    });
 
     // ? A glitch is making some images to increase in size if processed
     // ? with a higher quality than 70, defaulting env to 70 for the moment
-    if (info.size > size) {
+    if (info.size > metadata.size) {
       console.warn(
-        `The processed size of ${info.size} is bigger than the original size of ${size}`
+        `The processed size of ${info.size} is bigger than the original size of ${metadata.size}`
       );
     }
 
@@ -90,7 +80,6 @@ exports.handler = async (event, context) => {
   } catch (err) {
     const error = err.toString();
     console.error(error);
-
     const response = parseResponse(context, error, 500);
     return response;
   }
@@ -124,10 +113,20 @@ const parseResponse = (context, image, status = 200) => {
     }
   }
 
+  const error = JSON.stringify(
+    {
+      status: status,
+      code: "internal-error",
+      message: image,
+    },
+    2,
+    null
+  );
+
   const response = {
     statusCode: status,
     headers: headers,
-    body: typeof image === "string" ? image : image.Body.toString("base64"),
+    body: typeof image === "string" ? error : image.Body.toString("base64"),
     isBase64Encoded: typeof image === "string" ? false : true,
   };
 

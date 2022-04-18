@@ -4,7 +4,7 @@ const { uploadImage, getMetadata, parseImageKey } = require("./helpers/bucket");
 const {
   parseMultipartBoundary,
   parseMultipartBody,
-} = require("./helpers/utils");
+} = require("./helpers/multipart");
 const buffer = require("buffer");
 
 exports.handler = async (event, context) => {

@@ -6,26 +6,27 @@ defaults: &defaults
     SLS_IGNORE: favicon.ico
     SLS_VALID_PATH_REGEX: ".*"
     DEFAULT_CACHE_CONTROL: "max-age=2592000"
+    ALLOW_VERBOSE_ERRORS: true # Will return most errors due to bad parameters passed, set to false for a more failproof approach
 
 stages:
   dev:
     <<: *defaults
     bucketPolicy: ${file("./example-s3-bucket-policy.json")} # Path to bucket policy example
-    corsOrigin: "https://domain.com" # CORS Origin for POST and DELETE methods
+    corsOrigin: "https://dev.domain.com" # CORS Origin for POST and DELETE methods
     environment:
       <<: *defaults.environment
-      SOURCE_BUCKET: "domain.com" # ? Must be the same as below
-      CUSTOM_DOMAIN: "domain.com" # ? Must be the same as above
+      SOURCE_BUCKET: "dev.domain.com" # ? Must be the same as below
+      CUSTOM_DOMAIN: "dev.domain.com" # ? Must be the same as above
       SECURITY_KEY: "" # A string to be used to unhash securty requests, disabled if leaved empty
       ACM_CERTIFICATE_ARN: ""
   staging:
     <<: *defaults
     bucketPolicy: ${file("./example-s3-bucket-policy.json")} # Path to bucket policy example
-    corsOrigin: "https://domain.com" # CORS Origin for POST and DELETE methods
+    corsOrigin: "https://staging.domain.com" # CORS Origin for POST and DELETE methods
     environment:
       <<: *defaults.environment
-      SOURCE_BUCKET: "domain.com" # ? Must be the same as below
-      CUSTOM_DOMAIN: "domain.com" # ? Must be the same as above
+      SOURCE_BUCKET: "staging.domain.com" # ? Must be the same as below
+      CUSTOM_DOMAIN: "staging.domain.com" # ? Must be the same as above
       SECURITY_KEY: "" # A string to be used to unhash securty requests, disabled if leaved empty
       ACM_CERTIFICATE_ARN: ""
   prod:

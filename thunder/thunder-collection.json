@@ -34,7 +34,10 @@
         { "name": "w", "value": "500", "isPath": false },
         { "name": "h", "value": "350", "isPath": false },
         { "name": "q", "value": "50", "isPath": false },
-        { "name": "fm", "value": "webp", "isPath": false }
+        { "name": "fm", "value": "webp", "isPath": false },
+        { "name": "ll", "value": "false", "isPath": false },
+        { "name": "wm", "value": "watermark.png", "isPath": false },
+        { "name": "gr", "value": "southeast", "isPath": false }
       ],
       "tests": []
     },

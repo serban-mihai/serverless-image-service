@@ -120,7 +120,7 @@ functions:
       individually: true
       patterns:
         - "!**"
-        - "node_modules/**"
+        - "src/assets/**"
         - "src/errors/**"
         - "src/helpers/**"
         - "src/lib/**"
