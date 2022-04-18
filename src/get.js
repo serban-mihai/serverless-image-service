@@ -1,7 +1,7 @@
 const { beforeHandleRequest } = require("./helpers/security");
 const { getSetting } = require("./helpers/settings");
 const { getOriginalImage, parseImageKey } = require("./helpers/bucket");
-const { parseQueryParams } = require("./helpers/utils");
+const { parseQueryParams } = require("./helpers/queryParams");
 const sharp = require("sharp");
 
 exports.handler = async (event, context) => {
@@ -67,7 +67,6 @@ exports.handler = async (event, context) => {
   } catch (err) {
     const error = err.toString();
     console.error(error);
-
     const response = parseResponse(context, error, 500);
     return response;
   }
@@ -101,10 +100,20 @@ const parseResponse = (context, image, status = 200) => {
     }
   }
 
+  const error = JSON.stringify(
+    {
+      code: status,
+      status: "internal-error",
+      message: image,
+    },
+    2,
+    null
+  );
+
   const response = {
     statusCode: status,
     headers: headers,
-    body: typeof image === "string" ? image : image.Body.toString("base64"),
+    body: typeof image === "string" ? error : image.Body.toString("base64"),
     isBase64Encoded: typeof image === "string" ? false : true,
   };
 

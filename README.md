@@ -154,7 +154,11 @@ For some codec and config reasons, some formats that are applied `q=70` or highe
   }
   ```
   ```
-  Error: JP2 output requires libvips with support for OpenJPEG
+  {
+    "code": 500,
+    "status": "internal-error",
+    "message": "Error: Expected positive integer for height but received -350 of type number"
+  }
   ```
 #### POST - Upload Images
 Uploads one or many images to a specific path inside an **S3 Bucket**. Once provided `/path/to/upload` the function will attempt to upload all the files provided under it, if any of the selected filenames are already contained inside the same path, it will throw a conflict error.
