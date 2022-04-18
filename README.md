@@ -123,6 +123,8 @@ Currently, the following query parameters are supported:
 - `q=Number`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
 - `fm=String`: The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
 - `ll=Boolean`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.   
+- `wm=String` The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
+- `gr=String` The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
 
 Since these parameters can be chained into one request, their actions need to coexist in the final image. Some rules apply when for example you get both `w` and `h` in the same request, or when you have just one of them but also `q`
 > Order doesn't matter between Query Parameters
@@ -134,6 +136,7 @@ Since these parameters can be chained into one request, their actions need to co
 - `/path/image.jpg?q=57`: This will reduce the **quality** of `image.jpg` by **43%** before returning it. No scaling is applied
 - `/path/image.jpg?w=250&q=30`: For last, it will attempt to scale down `image.jpg` to **250px width** (with height proportionally scaled-down as well) and then reduce the quality of the scaled image by **70%**
 - `/path/image.jpg?w=100&fm=webp&ll=true`: Resizes `image.jpg` to **100px width** with proportional height and converts it to be in `webp` format, enabling **lossless** convertion.
+- `/path/image.jpg?wm=companyLogo.png&gr=southwest`: Applies the `companyLogo.png` watermark over `image.jpg` in `southwest` position aka. bottom-left. Pro-tip, leave some padding when designing the watermark, currently there is no offset option that works with `gravity`
 
 For some codec and config reasons, some formats that are applied `q=70` or higher, output a bigger size image than the original.
 > `GET` https://domain.com/random/path/image.jpg
@@ -155,8 +158,8 @@ For some codec and config reasons, some formats that are applied `q=70` or highe
   ```
   ```
   {
-    "code": 500,
-    "status": "internal-error",
+    "status": 500,
+    "code": "internal-error",
     "message": "Error: Expected positive integer for height but received -350 of type number"
   }
   ```
@@ -307,7 +310,7 @@ Along with the edits to almost all the code structure, there are still a couple 
 What needs to be addressed soon:
 - [ ] Support as many query params as possible mapped from [Sharp](https://sharp.pixelplumbing.com/api-operation) including the `fm=` parameter to return custom formats.
 - [ ] Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
-- [ ] Personal favourite, add watermark with custom position and size, can be achieved with [Compositing](https://sharp.pixelplumbing.com/api-composite)
+- [x] Personal favourite, add watermark with custom position, can be achieved with [Compositing](https://sharp.pixelplumbing.com/api-composite)
 - [ ] Test the security `s=""` query parameter or change it with another solution
 - [ ] Review security and `binaryMediaTypes` from API Gateway to disallow certain file types to be uploaded/served
 - [ ] Test uploading other files besides images, restrict or let pass other MIME Types with a flag on Serverless

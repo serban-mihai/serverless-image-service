@@ -1,5 +1,6 @@
 const { getSetting } = require("./settings");
 const { formats } = require("../lib/formats");
+const { defaults } = require("../lib/defaults");
 const verboseErrors = getSetting("ALLOW_VERBOSE_ERRORS");
 
 /**
@@ -16,14 +17,20 @@ exports.parseQueryParams = (params, metadata) => {
 
   edits.w = params.hasOwnProperty("w")
     ? parseValue(params.w, "number", verboseErrors)
-    : undefined;
+    : defaults.w;
   edits.h = params.hasOwnProperty("h")
     ? parseValue(params.h, "number", verboseErrors)
-    : undefined;
+    : defaults.h;
   edits.fm =
     params.hasOwnProperty("fm") && formats.includes(params.fm)
       ? parseValue(params.fm, "string")
       : format;
+  edits.wm = params.hasOwnProperty("wm")
+    ? parseValue(params.wm, "string")
+    : defaults.wm;
+  edits.gr = params.hasOwnProperty("gr")
+    ? parseValue(params.gr, "string")
+    : defaults.gr;
 
   // Quality and some file specifics options for the image processing
   const defaultQuality = getSetting("DEFAULT_QUALITY");
@@ -32,10 +39,10 @@ exports.parseQueryParams = (params, metadata) => {
     : defaultQuality;
   const lossless = params.hasOwnProperty("ll")
     ? parseValue(params.ll, "boolean")
-    : false;
+    : defaults.ll;
 
   const options = {
-    quality: q <= 70 ? q : 70, // ? Default to 70 until size bug is fixed
+    quality: q <= 70 ? q : defaults.q, // ? Default to 70 until size bug is fixed
     effort: 1, // ! Not available for some formats, need to check if it might break anything
   };
 
