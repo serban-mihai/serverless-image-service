@@ -74,11 +74,8 @@ const parseValue = (value, type, negative = true) => {
   if (type === "string" && typeof value !== "string") parsed = value.toString();
   else if (type === "number" && typeof value !== "number") {
     const temp = isNaN(parseInt(value)) ? undefined : parseInt(value);
-    if (temp < 0) {
-      parsed = negative ? temp : undefined;
-    } else {
-      parsed = temp;
-    }
+    if (temp < 0) parsed = negative ? temp : undefined;
+    else parsed = temp;
   } else if (type === "boolean" && typeof value !== "boolean") {
     const isNumber = isNaN(parseInt(value)) ? false : true;
     if (isNumber) {
