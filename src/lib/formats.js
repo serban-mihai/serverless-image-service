@@ -3,10 +3,9 @@ exports.formats = [
   "png",
   "webp",
   "gif",
-  "jp2",
+  "jp2", // JP2 output requires libvips with support for OpenJPEG
   "tiff",
   "avif",
   "heif",
   "raw",
-  "tile",
 ];

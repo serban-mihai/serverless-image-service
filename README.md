@@ -121,7 +121,7 @@ Currently, the following query parameters are supported:
 - `w=Number`: A positive number of **px** that represents the new **width** which the image is requested to scale at
 - `h=Number`: A positive number of **px** that represents the new **height** which the image is requested to scale at 
 - `q=Number`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
-- `fm=String`: The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`,`png`,`webp`,`gif`,`jp2`,`tiff`,`avif`,`heif`,`raw`,`tile`,
+- `fm=String`: The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
 
 Since these parameters can be chained into one request, their actions need to coexist in the final image. Some rules apply when for example you get both `w` and `h` in the same request, or when you have just one of them but also `q`
 > Order doesn't matter between Query Parameters
@@ -300,16 +300,16 @@ Along with the edits to almost all the code structure, there are still a couple 
 
 ### TODO
 What needs to be addressed soon:
-- [] Support as many query params as possible mapped from [Sharp](https://sharp.pixelplumbing.com/api-operation) including the `fm=` parameter to return custom formats.
-- [] Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
-- [] Personal favourite, add watermark with custom position and size, can be achieved with [Compositing](https://sharp.pixelplumbing.com/api-composite)
-- [] Test the security `s=""` query parameter or change it with another solution
-- [] Review security and `binaryMediaTypes` from API Gateway to disallow certain file types to be uploaded/served
-- [] Test uploading other files besides images, restrict or let pass other MIME Types with a flag on Serverless
-- [] Solve bugs within the image processing, such as the size being larger than the original with `q=70` or higher
-- [] Test and ensure CloudFront Cache's working properly to avoid Lambda throttling
-- [] Establish an efficient CLI Rollback of CloudFormation Stack from Serverless, it breaks because buckets related are not empty before removed
-- [] Introduce Unit Tests back
+- [ ] Support as many query params as possible mapped from [Sharp](https://sharp.pixelplumbing.com/api-operation) including the `fm=` parameter to return custom formats.
+- [ ] Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
+- [ ] Personal favourite, add watermark with custom position and size, can be achieved with [Compositing](https://sharp.pixelplumbing.com/api-composite)
+- [ ] Test the security `s=""` query parameter or change it with another solution
+- [ ] Review security and `binaryMediaTypes` from API Gateway to disallow certain file types to be uploaded/served
+- [ ] Test uploading other files besides images, restrict or let pass other MIME Types with a flag on Serverless
+- [ ] Solve bugs within the image processing, such as the size being larger than the original with `q=70` or higher
+- [ ] Test and ensure CloudFront Cache's working properly to avoid Lambda throttling
+- [ ] Establish an efficient CLI Rollback of CloudFormation Stack from Serverless, it breaks because buckets related are not empty before removed
+- [ ] Introduce Unit Tests back
 
 ## Consuming The Service Client-Side
 
