@@ -54,7 +54,18 @@
               "key": "ll",
               "value": "false",
               "description": "Enables Lossless compression when possible"
+            },
+            {
+              "key": "wm",
+              "value": "watermark.png",
+              "description": "The name of the Watermark to overlay"
+            },
+            {
+              "key": "gr",
+              "value": "southeast",
+              "description": "The position of the watermark, cardinal"
             }
+
           ]
         }
       },

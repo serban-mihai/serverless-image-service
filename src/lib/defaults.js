@@ -4,6 +4,6 @@ exports.defaults = {
   q: 70,
   fm: "jpeg",
   ll: false,
-  wm: undefined,
+  wm: "watermark.png",
   gr: "southeast"
 };
