@@ -56,7 +56,7 @@ exports.handler = async (event, context) => {
     };
     switch (fm) {
       case "png":
-        options["compressionLevel"] = 9;
+        options["compressionLevel"] = 6;
         options["palette"] = true;
       case "webm":
       case "avif": // ? Returns Content-Type: image/heif conversion takes ages and the image size is hudge
@@ -88,12 +88,10 @@ exports.handler = async (event, context) => {
     const response = parseResponse(context, processedImage);
     return response;
   } catch (err) {
-    console.error(err);
-    const parsedError = await JSON.stringify(err, 2, null);
-    if (parsedError === "{}") {
-      console.error("EMPTY");
-    }
-    const response = parseResponse(context, parsedError, err.status);
+    const error = err.toString();
+    console.error(error);
+
+    const response = parseResponse(context, error, 500);
     return response;
   }
 };
