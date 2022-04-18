@@ -120,8 +120,10 @@ functions:
       individually: true
       patterns:
         - "!**"
+        - "node_modules/**"
         - "src/errors/**"
         - "src/helpers/**"
+        - "src/lib/**"
         - "src/get.js"
     handler: "src/get.handler"
     layers:

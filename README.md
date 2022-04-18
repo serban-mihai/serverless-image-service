@@ -15,6 +15,7 @@ The advantages of having your custom solution are flexibility, lower costs, and 
       - [GET - List Images](#get---list-images)
       - [GET - Get Image](#get---get-image)
         - [Supported Query Parameters](#supported-query-parameters)
+        - [Use Cases Examples](#use-cases-examples)
       - [POST - Upload Images](#post---upload-images)
       - [DELETE - Remove Image](#delete---remove-image)
   - [Setup](#setup)
@@ -65,6 +66,8 @@ More about this in my [article](https://serbanmihai.com/quests/serverless-image-
 
 #### GET - List Images
 Gets a list of all the images in the **S3 Bucket** (currently limited to 1000 keys). It has been designed for **debugging purposes only**, but can be extended to list subpaths as well as being so integrated into CMS workflows.
+> `GET` https://domain.com/
+
 **It responds with:**
 - 🟢 Success: 
   ```
@@ -118,19 +121,24 @@ Currently, the following query parameters are supported:
 - `w=Number`: A positive number of **px** that represents the new **width** which the image is requested to scale at
 - `h=Number`: A positive number of **px** that represents the new **height** which the image is requested to scale at 
 - `q=Number`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
+- `fm=String`: The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
 
 Since these parameters can be chained into one request, their actions need to coexist in the final image. Some rules apply when for example you get both `w` and `h` in the same request, or when you have just one of them but also `q`
 > Order doesn't matter between Query Parameters
 
-Use cases examples:
+##### Use Cases Examples
 - `/path/image.jpg?w=500`: Will scale down `image.jpg` **width** to **500px** if its original width is higher, if the original width is lower, will NOT scale up, it will skip resizing maintaining aspect-ratio. Height is downscaled progressively in proportion to the new width
 - `/path/image.jpg?h=500`: Same as above but this time comparisons and dimensions are related to `image.jpg` **heights**
 - `/path/image.jpg?w=500&h=100`: Unless the values provided are not complementary related to the originals, this will crop `image.jpg` to be **500px width** and **100px height**. If any of the values is bigger than its original counterpart resize is skipped and the original image is returned
 - `/path/image.jpg?q=57`: This will reduce the **quality** of `image.jpg` by **43%** before returning it. No scaling is applied
 - `/path/image.jpg?w=250&q=30`: For last, it will attempt to scale down `image.jpg` to **250px width** (with height proportionally scaled-down as well) and then reduce the quality of the scaled image by **70%**
+- `/path/image.jpg?w=100&fm=webp`: Resizes `image.jpg` to **100px width** with proportional height and converts it to be in `webp` format, which reduces a lot the final size and it's **lossless** by default.
 
 For some codec and config reasons, some formats that are applied `q=70` or higher, output a bigger size image than the original.
- 
+> `GET` https://domain.com/random/path/image.jpg
+
+> `GET` https://domain.com/random/path/image.jpg?w=300&h=150&q=65&fm=webp
+
 **It responds with:**
 - 🟢 Success:
 - <p align="left"><img src="https://images.unsplash.com/photo-1616007211778-ab0921a264e8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=350&q=80" width="350px"></p>
@@ -143,6 +151,9 @@ For some codec and config reasons, some formats that are applied `q=70` or highe
     "code": "NoSuchKey",
     "message": "The specified key does not exist."
   }
+  ```
+  ```
+  Error: JP2 output requires libvips with support for OpenJPEG
   ```
 #### POST - Upload Images
 Uploads one or many images to a specific path inside an **S3 Bucket**. Once provided `/path/to/upload` the function will attempt to upload all the files provided under it, if any of the selected filenames are already contained inside the same path, it will throw a conflict error.
@@ -169,6 +180,7 @@ The raw data, once reaches Lambda, due to API Gateway [policy](https://docs.aws.
 I still haven't found a hack for this, avoiding useless data transformation would be ideal since it would be less prone to bad parsing.
 
 Once the data gets parsed, it's directly written on the **S3 Bucket** from the **Buffer** within the RAM, without being written on Lambda's ephemeral storage first.
+> `POST` https://domain.com/random/path/
 
 **It responds with:**
 - 🟢 Success: 
@@ -179,15 +191,15 @@ Once the data gets parsed, it's directly written on the **S3 Bucket** from the *
     "message": "Images uploaded successfully!",
     "ETags": [
       {
-        "link": "https://domain.com/path/image.jpg",
+        "link": "https://domain.com/random/path/image.jpg",
         "ETag": "firstimageetagrandomhsh123456789"
       },
       {
-        "link": "https://domain.com/path/image-second.png",
+        "link": "https://domain.com/random/path/image-second.png",
         "ETag": "secondimageetagrandomhsh12345678"
       },
       {
-        "link": "https://domain.com/path/image-third.webp",
+        "link": "https://domain.com/random/path/image-third.webp",
         "ETag": "thirdtimageetagrandomhsh98765432"
       },
       {
@@ -214,6 +226,7 @@ Once the data gets parsed, it's directly written on the **S3 Bucket** from the *
 
 #### DELETE - Remove Image
 Removes the image that corresponds to the key (path + filename) provided with the request. It can delete just one file per call, if the key isn't available will throw an error, if the file has been deleted will return a successful message.
+> `DELETE` https://domain.com/random/path/image.jpg
 
 **It responds with:**
 - 🟢 Success: 
@@ -257,7 +270,7 @@ You can find both Thunder and Postman Collections and Environment in their direc
 Before running the localhost environment consider importing into either **Thunder** or **Postman** their corresponding Collections and Environments.
 You can keep the `*-local.json` and change just **filename** and **path** as you debug.
 
-For local development `serverless-offline` plugin is used, to use it you first need to [Deploy](#how-to-deploy) it. After the deployment succeeds, you can run `sls offline --stage <YOUR_STAGE>` or from NPM `npm run offline:<YOUR_STAGE>` and use Thunder or Postman against the `local` Collection.
+For local development `serverless-offline` plugin is used, to use it you first need to [Deploy](#how-to-deploy) it. After the deployment succeeds, you can run `sls offline --stage <YOUR_STAGE>` or from NPM `npm run offline:<YOUR_STAGE>` and use Thunder or Postman against the `local` Environment.
 
 ## How to Deploy
 
@@ -287,15 +300,16 @@ Along with the edits to almost all the code structure, there are still a couple 
 
 ### TODO
 What needs to be addressed soon:
-- Support as many query params as possible mapped from [Sharp](https://sharp.pixelplumbing.com/api-operation) including the `format=` parameter to return custom formats
-- Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
-- Personal favourite, add watermark with custom position and size, can be achieved with [compositing](https://sharp.pixelplumbing.com/api-composite)
-- Test the security `s=""` query parameter or change it with another solution
-- Review security and `binaryMediaTypes` from API Gateway to disallow certain file types to be uploaded/served
-- Solve bugs within the image processing, such as the size being larger than the original with `q=70` or higher
-- Test and ensure CloudFront Cache's working properly to avoid Lambda throttling
-- Establish an efficient CLI Rollback of CloudFormation Stack from Serverless, it breaks because buckets related are not empty before removed
-- Introduce Unit Tests back
+- [ ] Support as many query params as possible mapped from [Sharp](https://sharp.pixelplumbing.com/api-operation) including the `fm=` parameter to return custom formats.
+- [ ] Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
+- [ ] Personal favourite, add watermark with custom position and size, can be achieved with [Compositing](https://sharp.pixelplumbing.com/api-composite)
+- [ ] Test the security `s=""` query parameter or change it with another solution
+- [ ] Review security and `binaryMediaTypes` from API Gateway to disallow certain file types to be uploaded/served
+- [ ] Test uploading other files besides images, restrict or let pass other MIME Types with a flag on Serverless
+- [ ] Solve bugs within the image processing, such as the size being larger than the original with `q=70` or higher
+- [ ] Test and ensure CloudFront Cache's working properly to avoid Lambda throttling
+- [ ] Establish an efficient CLI Rollback of CloudFormation Stack from Serverless, it breaks because buckets related are not empty before removed
+- [ ] Introduce Unit Tests back
 
 ## Consuming The Service Client-Side
 
@@ -350,7 +364,7 @@ Most of the time you won't need to include any `Content-Type` header into the re
 ## Limits
 
 Many limits are still unknown due to the early life of the project, this thing was just born 😅
-- There is a limit of 10Mb max for payloads on the POST route, meaning you can't upload 50 images at once unless they're thumbnails
+- There is a limit of 10Mb max for payloads on the `POST` route, meaning you can't upload 50 images at once unless they're thumbnails
 - I'm still breaking things, will update as soon as something happens...
 
 ## How to Contribute
