@@ -344,7 +344,8 @@ There are a couple of things to be done **before deploying**:
 
 The reason we are creating the Certificate in `us-east-1` is that for some reason AWS won't accept to create resources in other regions such as `eu-central-1` if the Certificate also belongs in `eu-central-1`
 After the above points are checked everything should be ready to go for [deployment](#how-to-deploy).
-- After `CloudFormation Stack` deploys, register a `CNAME` of the created `CloudFront Distribution` within your **external CDN DNS** or **Route53** and **Proxy** traffic through it. The `distribution` looks like: `randomhash0123.cloudfront.net`. 
+- After the `CloudFormation Stack` deploys, add a `CNAME` of the created `CloudFront Distribution` within your **external CDN DNS** or **Route53** and **Proxy** traffic through it. The `distribution` looks like: `randomhash0123.cloudfront.net` and has to be assosiated with the name of your `S3 Bucket`.
+> Record Example: **Type**: `CNAME` | **Name**: `my.domain.com` | **Value**: `randomhash0123.cloudfront.net` 
 
 ### Debugging
 To debug endpoints I recommend the [Thunder Client](https://www.thunderclient.com/) extension for VSCode, it's feature-rich and has everything you need to send requests and debug endpoints. If you don't find yourself comfortable you can also use **Postman** instead, or `curl` if you're a true hardcore!
@@ -400,7 +401,7 @@ What needs to be addressed soon:
 - [ ] Review security and `binaryMediaTypes` from API Gateway to disallow certain file types to be uploaded/served
 - [ ] Test uploading other files besides images, restrict or let pass other MIME Types with a flag on Serverless
 - [ ] Solve bugs within the image processing, such as the size being larger than the original with `q=70` or higher
-- [ ] Test and ensure CloudFront Cache's working properly to avoid Lambda throttling
+- [ ] Test and ensure CloudFront's Cache working properly to avoid Lambda throttling
 - [ ] Establish an efficient CLI Rollback of CloudFormation Stack from Serverless, it breaks because buckets related are not empty before removed
 - [ ] Introduce Unit Tests back
 
