@@ -18,35 +18,56 @@ exports.parseQueryParams = (params, metadata) => {
 
   // ? Resizing Operations
   edits.resize.w = params.hasOwnProperty("w")
-    ? parseValue(params.w, "number", verboseErrors)
+    ? parseValue(params.w, "integer", verboseErrors)
     : resize.w;
   edits.resize.h = params.hasOwnProperty("h")
-    ? parseValue(params.h, "number", verboseErrors)
+    ? parseValue(params.h, "integer", verboseErrors)
     : resize.h;
 
   // ? Image Operations
   // TODO:
-  edits.operations.r = params.hasOwnProperty("r")
-    ? parseValue(params.r, "number", verboseErrors)
+  edits.operations.r = params.hasOwnProperty("r")         // Rotation
+    ? parseValue(params.r, "integer", verboseErrors)
     : operations.r;
-  edits.operations.flip = params.hasOwnProperty("flip")
+  edits.operations.flip = params.hasOwnProperty("flip")   // Flip Y
     ? parseValue(params.flip, "boolean")
     : operations.flip;
-  edits.operations.flop = params.hasOwnProperty("flop")
+  edits.operations.flop = params.hasOwnProperty("flop")   // Flop X
     ? parseValue(params.flop, "boolean")
     : operations.flop;
-  edits.operations.af = params.hasOwnProperty("af")
+  edits.operations.af = params.hasOwnProperty("af")       // Affine
     ? parseValue(params.af, "array")
     : operations.af;
-  edits.operations.afbg = params.hasOwnProperty("afbg")
+  edits.operations.afbg = params.hasOwnProperty("afbg")   // Affine Background
     ? parseValue(params.afbg, "string")
     : operations.afbg;
-  edits.operations.afi = params.hasOwnProperty("afi")
+  edits.operations.afi = params.hasOwnProperty("afi")     // Affine Interpolation
     ? parseValue(params.afi, "string")
     : operations.afi;
-  edits.operations.sh = params.hasOwnProperty("sh")
+  edits.operations.sh = params.hasOwnProperty("sh")       // Sharpen
     ? parseValue(params.sh, "object")
     : operations.sh;
+  edits.operations.md = params.hasOwnProperty("md")       // Median
+    ? parseValue(params.md, "integer", verboseErrors)
+    : operations.md;
+  edits.operations.bl = params.hasOwnProperty("bl")       // Blur Sigma
+    ? parseValue(params.bl, "float", verboseErrors)
+    : operations.bl;
+  edits.operations.fl = params.hasOwnProperty("fl")       // Flatten
+    ? parseValue(params.fl, "string", verboseErrors)
+    : operations.fl;
+  edits.operations.gm = params.hasOwnProperty("gm")       // Gamma
+    ? parseValue(params.gm, "array", verboseErrors)
+    : operations.gm;
+  edits.operations.ng = params.hasOwnProperty("ng")       // Negate
+    ? parseValue(params.ng, "boolean", verboseErrors)
+    : operations.ng;
+  edits.operations.nr = params.hasOwnProperty("nr")       // Normalize
+    ? parseValue(params.nr, "boolean", verboseErrors)
+    : operations.nr;
+  edits.operations.cl = params.hasOwnProperty("cl")       // Clahe
+    ? parseValue(params.cl, "object", verboseErrors)
+    : operations.cl;
 
   // ? Color Manipulation
   // TODO:
@@ -68,11 +89,9 @@ exports.parseQueryParams = (params, metadata) => {
       ? parseValue(params.fm, "string")
       : format;
 
-  // TODO: Remove below
-  // const defaultQuality = getSetting("DEFAULT_QUALITY");
-
+  const defaultQuality = getSetting("DEFAULT_QUALITY");
   const q = params.hasOwnProperty("q")
-    ? parseValue(params.q, "number", verboseErrors)
+    ? parseValue(params.q, "integer", verboseErrors)
     : output.q;
   const ll = params.hasOwnProperty("ll")
     ? parseValue(params.ll, "boolean")
@@ -80,7 +99,7 @@ exports.parseQueryParams = (params, metadata) => {
 
   // Quality and some file specifics options for the image processing
   const options = {
-    quality: q <= 70 ? q : defaults.q, // ? Default to 70 until size bug is fixed
+    quality: q <= 70 ? q : output.q, // ? Default to 70 until size bug is fixed
     effort: 1, // ! Not available for some formats, need to check if it might break anything
   };
 
@@ -116,15 +135,21 @@ const parseValue = (value, type, negative = true) => {
     try {
       parsed = JSON.parse(value);
     } catch (err) {
-      parsed = undefined; // defaulting to undefined to prevend useless trigger on wrong param value
+      if (type === "array") parsed = [];
+      else if (type === "object") parsed = {};
     }
   } else if (type === "string" && typeof value !== "string")
     parsed = value.toString();
-  else if (type === "number" && typeof value !== "number") {
+  else if (type === "integer" && typeof value !== "integer") {
     const temp = isNaN(parseInt(value)) ? undefined : parseInt(value);
     if (temp < 0) parsed = negative ? temp : undefined;
     else parsed = temp;
-  } else if (type === "boolean" && typeof value !== "boolean") {
+  } else if (type === "float" && typeof value !== "float") {
+    const temp = isNaN(parseFloat(value)) ? undefined : parseFloat(value);
+    if (temp < 0) parsed = negative ? temp : undefined;
+    else parsed = temp;
+  } 
+  else if (type === "boolean" && typeof value !== "boolean") {
     const isNumber = isNaN(parseInt(value)) ? false : true;
     if (isNumber) {
       switch (parseInt(value)) {

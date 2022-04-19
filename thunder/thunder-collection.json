@@ -43,7 +43,18 @@
         { "name": "flop", "value": "false", "isPath": false },
         { "name": "af", "value": "[[1,0.3],[0.1,0.7]]", "isPath": false },
         { "name": "afbg", "value": "#FFFFFF", "isPath": false },
-        { "name": "afi", "value": "nohalo", "isPath": false }
+        {
+          "name": "sh",
+          "value": "{\"sigma\":2,\"m1\":0,\"m2\":3,\"x1\":3,\"y2\":15,\"y3\":15}",
+          "isPath": false
+        },
+        { "name": "md", "value": "10", "isPath": false },
+        { "name": "bl", "value": "2.2", "isPath": false },
+        { "name": "fl", "value": "#F0A703", "isPath": false },
+        { "name": "gm", "value": "[2.2,2.1]", "isPath": false },
+        { "name": "ng", "value": "false", "isPath": false },
+        { "name": "nr", "value": "false", "isPath": false },
+        { "name": "cl", "value": "{\"width\":3,\"height\":3}", "isPath": false }
       ],
       "tests": []
     },

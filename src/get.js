@@ -58,6 +58,16 @@ exports.handler = async (event, context) => {
         interpolator: sharp.interpolators[operations.afi],
       });
     if (operations.sh) sharpObject.sharpen(operations.sh);
+    if (operations.md) sharpObject.median(operations.md);
+    if (operations.bl) sharpObject.blur(operations.bl);
+    if (operations.fl) sharpObject.flatten({ background: operations.fl });
+    if (operations.gm)
+      operations.gm.length === 1
+        ? sharpObject.gamma(operations.gm[0])
+        : sharpObject.gamma(operations.gm[0], operations.gm[1]);
+    if (operations.ng) sharpObject.negate({ alpha: operations.ng });
+    if (operations.nr) sharpObject.normalize(operations.nr);
+    if (operations.cl) sharpObject.clahe(operations.cl);
 
     // ? Color Manipulation
     // TODO:

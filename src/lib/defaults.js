@@ -5,12 +5,19 @@ exports.defaults = {
   },
   operations: {
     r: undefined, // rotation
-    flip: false, // flip Y axis
-    flop: false, // flop X axis
+    flip: undefined, // flip Y axis
+    flop: undefined, // flop X axis
     af: undefined, // affine matrix
     afbg: "#000000", // affine background
     afi: "bicubic", // affine interpolator
-    sh: undefined // sharpen
+    sh: undefined, // sharpen
+    md: undefined, // median
+    bl: undefined, // blur sigma
+    fl: undefined, // flatten
+    gm: undefined, // gamma
+    ng: undefined, // negate
+    nr: undefined, // normalize
+    cl: undefined, // clahe
   },
   color: {},
   channel: {},

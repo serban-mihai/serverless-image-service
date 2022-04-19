@@ -157,19 +157,24 @@ For some codec and config reasons, some formats that are applied `q=70` or highe
 ##### Supported Query Parameters
 Currently, the following query parameters are supported:
 ###### Resizing Operations | [Docs](https://sharp.pixelplumbing.com/api-resize)
-- `w=<Number>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **width** which the image is requested to scale at
-- `h=<Number>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **height** which the image is requested to scale at
+- `w=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **width** which the image is requested to scale at
+- `h=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **height** which the image is requested to scale at
  
 ###### Image Operations | [Docs](https://sharp.pixelplumbing.com/api-operation)
-- `r=<Number>`: [📝](https://sharp.pixelplumbing.com/api-operation#rotate) | An integer number that represents the **rotation degree** at which the image will be rotated. Negative numbers allowed for counter-clockwise rotations.
+- `r=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#rotate) | An integer number that represents the **rotation degree** at which the image will be rotated. Negative numbers allowed for counter-clockwise rotations.
 - `flip=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flip) | If true will **mirror** the image on the **Y axis**
 - `flop=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flop) | If true will **mirror** the image on the **X axis**
 - `af=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#affine) | If a valid `Array` is passed will perform an **affine transform** on the image based on offset values inside the `Array`
 - `afbg=<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The **background in Hex** for the affine transform, defaults to full black `#000000`
 - `afi=<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The Interpolator for the affine transform, can be one of `nearest`, `bilinear`, `bicubic`, `locallyBoundedBicubic`, `nohalo`, `vertexSplitQuadraticBasisSpline`. It defaults to `bicubic`
 - `sh=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#sharpen) | **Sharpen** the image, requires a valid JSON Object as value, more details about individual keys in the Docs
-  
-
+- `md=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#median) | Apply a **Median filter** over the image. Value is an `integer`, represents the square mask NxN 
+- `bl=<Float>`: [📝](https://sharp.pixelplumbing.com/api-operation#blur) | **Blur** the image by the value, which represents the **sigma** of the Gaussian mask. Values accepted in the range 0.3 and 1000, `float` or `integer` types.
+- `fl=<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#flatten) | **Flatten**, merge alpha transparency channel, if any, with a background, then remove the alpha channel. Value is a **Hex color**
+- `gm=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#gamma) | **Gamma** correction. Value is an `array of floats`, first element is `gamma in` second is `gamma out`
+- `ng=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#negate) | Produces the **Negative** of the image. Value is a `boolean`
+- `nr=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#normalize) | **Normalize** output image contrast by stretching its luminance to cover the full dynamic range, Value is a `boolean` 
+- `cl=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#clahe) | Enhance the clarity of the image by bringing out darker details through **Clahe**. Value is an Object with `width` `height` and optional `maxSlope` params. More in the Docs
 
 ###### Color Manipulation | [Docs](https://sharp.pixelplumbing.com/api-colour)
 
@@ -180,7 +185,7 @@ Currently, the following query parameters are supported:
 - `gr=<String>` [📝](https://sharp.pixelplumbing.com/api-composite#parameters) | The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
 
 ###### Output Options | [Docs](https://sharp.pixelplumbing.com/api-resize)
-- `q=<Number>`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
+- `q=<Integer>`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
 - `fm=<String>`: [📝](https://sharp.pixelplumbing.com/api-output#toformat) | The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
 - `ll=<Boolean>`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.
 
@@ -197,11 +202,17 @@ Since these parameters can be chained into one request, their actions need to co
 - `/path/image.jpg?r=33`: Will rotate `image.jpg` of **33 degrees clockwise**. Warning, the canvas containing the image will scale to new dimensions to include the whole image corners!
 - `/path/image.jpg?r=-75`: Will rotate `image.jpg` of **75 degrees counter-clockwise**. Same warning as above applies here as well
 - `/path/image.jpg?flip=true&flop=1`: Will mirror `image.jpg` on **both X and Y axis** (diagonal mirror). You can pass both `true` `false` and `0` `1` values 
-- `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]`: Will perform an affine transform over `image.jpg`
+- `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]`: Will perform an **affine transform** over `image.jpg`
 - `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afbg=#FFFFFF`: Will perform an affine transform over `image.jpg` and convert the background to full white `#FFFFFF` 
 - `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afi=locallyBoundedBicubic`: Will perform an affine transform over `image.jpg` and apply an interpolator of `lbb` 
-- `/path/image.jpg?sh={"sigma":2,"m1":0,"m2":3,"x1":3,"y2":15,"y3":15}`: Will Sharpen `image.jpg` based on the parameters contained in the value Object 
-   
+- `/path/image.jpg?sh={"sigma":2,"m1":0,"m2":3,"x1":3,"y2":15,"y3":15}`: Will **Sharpen** `image.jpg` based on the parameters contained in the value Object
+- `/path/image.jpg?md=10`: Apply **Median** filter over `image.jpg`
+- `/path/image.jpg?bl=2.2`: **Blur** `image.jpg` with a sigma of `2.2` 
+- `/path/image.jpg?fl=#F0A703`: Apply **Flatten** filter over `image.jpg` mergin alpha transparency with color `#F0A703` (yellowish)
+- `/path/image.jpg?gm=[2.2,2.1]`: Apply **Gamma** correction of `2.2` input and `2.3` output on `image.jpg`
+- `/path/image.jpg?ng=true`: Get the **Negative** of `image.jpg`
+- `/path/image.jpg?nr=true`: Apply **Normalize** for full dynamic range luminance over `image.jpg`
+- `/path/image.jpg?cl={"width":3,"height":3}`: Apply histogram equalization **Clahe** over `image,jpg` 
 ###### Examples - Color Manipulation
 
 ###### Examples - Channel Manipulation
@@ -366,6 +377,7 @@ What needs to be addressed soon:
 - [ ] Add support for [Image Operations](https://sharp.pixelplumbing.com/api-operation)
 - [ ] Add support for [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
 - [ ] Add support for [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
+- [ ] Add Images under each option in the Docs
 - [ ] Allow `Base64` encoding for long and explicit param values (Arrays and Objects)
 - [ ] Create presets for popular transforms that can be applied all at once with a special query param and have priority over other query parameters
 - [ ] Extend `DELETE` endpoint to remove multiple assets at once, similar to `POST` but reversed.

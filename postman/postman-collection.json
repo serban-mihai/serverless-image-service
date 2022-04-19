@@ -94,6 +94,46 @@
               "key": "afi",
               "value": "nohalo",
               "description": "Interpolation of the affine transform"
+            },
+            {
+              "key": "sh",
+              "value": "{\"sigma\":2,\"m1\":0,\"m2\":3,\"x1\":3,\"y2\":15,\"y3\":15}",
+              "description": "Sharpen"
+            },
+            {
+              "key": "md",
+              "value": "10",
+              "description": "Median"
+            },
+            {
+              "key": "bl",
+              "value": "2.2",
+              "description": "Blur Sigma"
+            },
+            {
+              "key": "fl",
+              "value": "#F0A703",
+              "description": "Flatten"
+            },
+            {
+              "key": "gm",
+              "value": "[2.2,2.1]",
+              "description": "Gamma"
+            },
+            {
+              "key": "ng",
+              "value": "false",
+              "description": "Negate"
+            },
+            {
+              "key": "nr",
+              "value": "false",
+              "description": "Normalize"
+            },
+            {
+              "key": "cl",
+              "value": "{\"width\":3,\"height\":3}",
+              "description": "Clahe"
             }
           ]
         }
