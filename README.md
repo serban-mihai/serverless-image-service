@@ -157,52 +157,52 @@ For some codec and config reasons, some formats that are applied `q=70` or highe
 ##### Supported Query Parameters
 Currently, the following query parameters are supported:
 ###### Resizing Operations | [Docs](https://sharp.pixelplumbing.com/api-resize)
-- `w=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **width** which the image is requested to scale at
-- `h=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **height** which the image is requested to scale at
+- `w=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **width** which the image is requested to scale at
+- `h=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **height** which the image is requested to scale at
  
 ###### Image Operations | [Docs](https://sharp.pixelplumbing.com/api-operation)
-- `r=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#rotate) | An integer number that represents the **rotation degree** at which the image will be rotated. Negative numbers allowed for counter-clockwise rotations.
-- `flip=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flip) | If true will **mirror** the image on the **Y axis**
-- `flop=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flop) | If true will **mirror** the image on the **X axis**
-- `af=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#affine) | If a valid `Array` is passed will perform an **affine transform** on the image based on offset values inside the `Array`
-- `afbg=<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The **background in Hex** for the affine transform, defaults to full black `#000000`
-- `afi=<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The Interpolator for the affine transform, can be one of `nearest`, `bilinear`, `bicubic`, `locallyBoundedBicubic`, `nohalo`, `vertexSplitQuadraticBasisSpline`. It defaults to `bicubic`
-- `sh=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#sharpen) | **Sharpen** the image, requires a valid JSON Object as value, more details about individual keys in the Docs
-- `md=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#median) | Apply a **Median filter** over the image. Value is an `integer`, represents the square mask NxN 
-- `bl=<Float>`: [📝](https://sharp.pixelplumbing.com/api-operation#blur) | **Blur** the image by the value, which represents the **sigma** of the Gaussian mask. Values accepted in the range 0.3 and 1000, `float` or `integer` types.
-- `fl=<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#flatten) | **Flatten**, merge alpha transparency channel, if any, with a background, then remove the alpha channel. Value is a **Hex color**
-- `gm=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#gamma) | **Gamma** correction. Value is an `array of floats`, first element is `gamma in` second is `gamma out`
-- `ng=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#negate) | Produces the **Negative** of the image. Value is a `boolean`
-- `nr=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#normalize) | **Normalize** output image contrast by stretching its luminance to cover the full dynamic range, Value is a `boolean` 
-- `cl=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#clahe) | Enhance the clarity of the image by bringing out darker details through **Clahe**. Value is an Object with `width` `height` and optional `maxSlope` params. More in the Docs
-- `cv=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#convolve) | **Convolve** with a specific kernel, more about value in Docs
-- `th=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#threshold) | Any pixel value greater than or equal to the **Threshold** value will be set to 255, otherwise it will be set to 0
-- `bo=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#boolean) | Perform a bitwise **Boolean** operation with operand image. you can pass `and`, `or` and `eor` as `operator`, and a link to an image to fetch to `operand`. Doesn't support local files yet
-- `li=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#linear) | Apply the **Linear** formula a * input + b to the image (levels adjustment)
-- `rc=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#recomb) | **Recomb** the image with the specified matrix.
-- `mo=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#modulate) | **Modulate** transform the image using brightness, saturation, hue rotation, and lightness. See Object structure in Docs
+- `r=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#rotate) | An integer number that represents the **rotation degree** at which the image will be rotated. Negative numbers allowed for counter-clockwise rotations.
+- `flip=` | `<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flip) | If true will **mirror** the image on the **Y axis**
+- `flop=` | `<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flop) | If true will **mirror** the image on the **X axis**
+- `af=` | `<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#affine) | If a valid `Array` is passed will perform an **affine transform** on the image based on offset values inside the `Array`
+- `afbg=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The **background in Hex** for the affine transform, defaults to full black `#000000`
+- `afi=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The Interpolator for the affine transform, can be one of `nearest`, `bilinear`, `bicubic`, `locallyBoundedBicubic`, `nohalo`, `vertexSplitQuadraticBasisSpline`. It defaults to `bicubic`
+- `sh=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#sharpen) | **Sharpen** the image, requires a valid JSON Object as value, more details about individual keys in the Docs
+- `md=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#median) | Apply a **Median filter** over the image. Value is an `integer`, represents the square mask NxN 
+- `bl=` | `<Float>`: [📝](https://sharp.pixelplumbing.com/api-operation#blur) | **Blur** the image by the value, which represents the **sigma** of the Gaussian mask. Values accepted in the range 0.3 and 1000, `float` or `integer` types.
+- `fl=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#flatten) | **Flatten**, merge alpha transparency channel, if any, with a background, then remove the alpha channel. Value is a **Hex color**
+- `gm=` | `<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#gamma) | **Gamma** correction. Value is an `array of floats`, first element is `gamma in` second is `gamma out`
+- `ng=` | `<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#negate) | Produces the **Negative** of the image. Value is a `boolean`
+- `nr=` | `<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#normalize) | **Normalize** output image contrast by stretching its luminance to cover the full dynamic range, Value is a `boolean` 
+- `cl=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#clahe) | Enhance the clarity of the image by bringing out darker details through **Clahe**. Value is an Object with `width` `height` and optional `maxSlope` params. More in the Docs
+- `cv=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#convolve) | **Convolve** with a specific kernel, more about value in Docs
+- `th=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#threshold) | Any pixel value greater than or equal to the **Threshold** value will be set to 255, otherwise it will be set to 0
+- `bo=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#boolean) | Perform a bitwise **Boolean** operation with operand image. you can pass `and`, `or` and `eor` as `operator`, and a link to an image to fetch to `operand`. Doesn't support local files yet
+- `li=` | `<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#linear) | Apply the **Linear** formula a * input + b to the image (levels adjustment)
+- `rc=` | `<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#recomb) | **Recomb** the image with the specified matrix.
+- `mo=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#modulate) | **Modulate** transform the image using brightness, saturation, hue rotation, and lightness. See Object structure in Docs
 
 ###### Color Manipulation | [Docs](https://sharp.pixelplumbing.com/api-colour)
-- `t=<Object>`: [📝](https://sharp.pixelplumbing.com/api-colour#tint) | **Tint** the image using the provided chroma while preserving the image luminance. Value is an Object with `r` `g` `b` props. Alpha is ignored.
-- `g=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-colour#greyscale) | Convert to 8-bit **greyscale** if the value is `true`or `1`
-- `pc=<String>`: [📝](https://sharp.pixelplumbing.com/api-colour#pipelinecolourspace) | The input image will be **converted** to the provided **colourspace** at the start of the pipeline. Possible values: `multiband`, `b-w`, `histogram`, `xyz`, `lab`, `cmyk`, `labq`, `rgb`, `cmc`, `lch`, `labs`, `srgb`, `yxy`, `fourier`, `rgb16`, `grey16`, `matrix`, `scrgb`, `hsv`, `last`, 
-- `tc=<String>`: [📝](https://sharp.pixelplumbing.com/api-colour#tocolourspace) | Set the **output colourspace**. Possible values same as above
+- `t=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-colour#tint) | **Tint** the image using the provided chroma while preserving the image luminance. Value is an Object with `r` `g` `b` props. Alpha is ignored.
+- `g=` | `<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-colour#greyscale) | Convert to 8-bit **greyscale** if the value is `true`or `1`
+- `pc=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-colour#pipelinecolourspace) | The input image will be **converted** to the provided **colourspace** at the start of the pipeline. Possible values: `multiband`, `b-w`, `histogram`, `xyz`, `lab`, `cmyk`, `labq`, `rgb`, `cmc`, `lch`, `labs`, `srgb`, `yxy`, `fourier`, `rgb16`, `grey16`, `matrix`, `scrgb`, `hsv`, `last`, 
+- `tc=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-colour#tocolourspace) | Set the **output colourspace**. Possible values same as above
 
 ###### Channel Manipulation | [Docs](https://sharp.pixelplumbing.com/api-channel)
-- `ra=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-channel#removealpha) | if value is `true` then **Remove Alpha** channel from `image.jpg` if any
-- `ea=<Float>`: [📝](https://sharp.pixelplumbing.com/api-channel#ensurealpha) | **Ensure Alpha** channel on `image.jpg` by the number in the value
-- `ec=<String>`: [📝](https://sharp.pixelplumbing.com/api-channel#extractchannel) | **Extract a Single Channel** from `image.jpg`. Possible values are `red`, `green`, `blue` and `alpha` 
-- `jc=<Array>`: [📝](https://sharp.pixelplumbing.com/api-channel#joinchannel) | **Join more channels** into `image.jpg`. Value is an array of links to images with different channels to be fetched and then merged. Warning, is error prone, use carefully.
-- `bb=<String>`: [📝](https://sharp.pixelplumbing.com/api-channel#bandbool) | Perform a **Bitwise Boolean** operation on all input image channels (bands) to produce a single channel output image. Possible values are `and`, `or` and `eor`
+- `ra=` | `<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-channel#removealpha) | if value is `true` then **Remove Alpha** channel from `image.jpg` if any
+- `ea=` | `<Float>`: [📝](https://sharp.pixelplumbing.com/api-channel#ensurealpha) | **Ensure Alpha** channel on `image.jpg` by the number in the value
+- `ec=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-channel#extractchannel) | **Extract a Single Channel** from `image.jpg`. Possible values are `red`, `green`, `blue` and `alpha` 
+- `jc=` | `<Array>`: [📝](https://sharp.pixelplumbing.com/api-channel#joinchannel) | **Join more channels** into `image.jpg`. Value is an array of links to images with different channels to be fetched and then merged. Warning, is error prone, use carefully.
+- `bb=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-channel#bandbool) | Perform a **Bitwise Boolean** operation on all input image channels (bands) to produce a single channel output image. Possible values are `and`, `or` and `eor`
 
 ###### Compositing Images | [Docs](https://sharp.pixelplumbing.com/api-composite)
-- `wm=<String>` [📝](https://sharp.pixelplumbing.com/api-composite#composite) | The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
-- `gr=<String>` [📝](https://sharp.pixelplumbing.com/api-composite#parameters) | The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
+- `wm=` | `<String>` [📝](https://sharp.pixelplumbing.com/api-composite#composite) | The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
+- `gr=` | `<String>` [📝](https://sharp.pixelplumbing.com/api-composite#parameters) | The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
 
 ###### Output Options | [Docs](https://sharp.pixelplumbing.com/api-resize)
-- `q=<Integer>`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
-- `fm=<String>`: [📝](https://sharp.pixelplumbing.com/api-output#toformat) | The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
-- `ll=<Boolean>`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.
+- `q=` | `<Integer>`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
+- `fm=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-output#toformat) | The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
+- `ll=` | `<Boolean>`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.
 
 Since these parameters can be chained into one request, their actions need to coexist in the final image. Some rules apply when for example you get both `w` and `h` in the same request, or when you have just one of them but also `q`
 > Order doesn't matter between Query Parameters
