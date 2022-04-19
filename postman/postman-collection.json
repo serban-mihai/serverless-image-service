@@ -164,6 +164,26 @@
               "key": "mo",
               "value": "{\"brightness\":0.5,\"saturation\":0.5,\"hue\":90}",
               "description": "Modulate"
+            },
+            {
+              "key": "t",
+              "value": "{\"r\":255,\"g\":16,\"b\":240}",
+              "description": "Tint the image with the provided chroma, alpha is ignored"
+            },
+            {
+              "key": "g",
+              "value": "true",
+              "description": "Convert to 8-bit greyscale, 256 shades of grey"
+            },
+            {
+              "key": "pc",
+              "value": "rgb16",
+              "description": "The input image will be converted to the provided colourspace at the start of the pipeline"
+            },
+            {
+              "key": "tc",
+              "value": "srgb",
+              "description": "Set the output colourspace"
             }
           ]
         }

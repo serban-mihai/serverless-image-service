@@ -80,7 +80,15 @@
           "name": "mo",
           "value": "{\"brightness\":0.5,\"saturation\":0.5,\"hue\":90}",
           "isPath": false
-        }
+        },
+        {
+          "name": "t",
+          "value": "{\"r\":255,\"g\":16,\"b\":240}",
+          "isPath": false
+        },
+        { "name": "g", "value": "true", "isPath": false },
+        { "name": "pc", "value": "rgb16", "isPath": false },
+        { "name": "tc", "value": "srgb", "isPath": false }
       ],
       "tests": []
     },

@@ -24,9 +24,13 @@ exports.defaults = {
     li: undefined, // linear
     rc: undefined, // recomb
     mo: undefined, // modulate
-
   },
-  color: {},
+  color: {
+    t: undefined, // tint
+    g: undefined, // grayscale
+    pc: undefined, // pipeline colour space
+    tc: undefined, // to colour space
+  },
   channel: {},
   compositing: {
     wm: undefined, // watermark

@@ -183,6 +183,10 @@ Currently, the following query parameters are supported:
 - `mo=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#modulate) | **Modulate** transform the image using brightness, saturation, hue rotation, and lightness. See Object structure in Docs
 
 ###### Color Manipulation | [Docs](https://sharp.pixelplumbing.com/api-colour)
+- `t=<Object>`: [📝](https://sharp.pixelplumbing.com/api-colour#tint) | **Tint** the image using the provided chroma while preserving the image luminance. Value is an Object with `r` `g` `b` props. Alpha is ignored.
+- `g=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-colour#greyscale) | Convert to 8-bit **greyscale** if the value is `true`or `1`
+- `pc=<String>`: [📝](https://sharp.pixelplumbing.com/api-colour#pipelinecolourspace) | The input image will be **converted** to the provided **colourspace** at the start of the pipeline. Possible values: `multiband`, `b-w`, `histogram`, `xyz`, `lab`, `cmyk`, `labq`, `rgb`, `cmc`, `lch`, `labs`, `srgb`, `yxy`, `fourier`, `rgb16`, `grey16`, `matrix`, `scrgb`, `hsv`, `last`, 
+- `tc=<String>`: [📝](https://sharp.pixelplumbing.com/api-colour#tocolourspace) | Set the **output colourspace**. Possible values same as above
 
 ###### Channel Manipulation | [Docs](https://sharp.pixelplumbing.com/api-channel)
 
@@ -225,8 +229,12 @@ Since these parameters can be chained into one request, their actions need to co
 - `/path/image.jpg?li=[1.0,0.0]`: Will pass 1.0 as `a` and 0.0 as `b` to the **Linear** formula `a * input + b` over `image.jpg`
 - `/path/image.jpg?rc=[[0.3588,0.7044,0.1368],[0.2990,0.5870,0.1140],[0.2392,0.4696,0.0912]]`: **Recomb** `image.jpg` to match the matrix of values provided
 - `/path/image.jpg?mo={"brightness":0.5,"saturation":0.5,"hue":90}`: **Modulate** explicit values `brightness`, `saturation` and `hue` over `image.jpg`
-- 
+
 ###### Examples - Color Manipulation
+- `/path/image.jpg?t={"r":255,"g":16,"b":240}`: **Tint** `image.jpg` with the provided `red=255` `green=16` `b=240` params. Warning, this affects the **Watermark** if any as well
+- `/path/image.jpg?g=true`: Converts `image.jpg` to **Greyscale**
+- `/path/image.jpg?pc=rgb16`: Sets the **current** `image.jpg` to `rgb16` **Colour Space**
+- `/path/image.jpg?tc=srgb`: Sets the **output** `image.jpg` to `srgb` **Colour Space**
 
 ###### Examples - Channel Manipulation
 
@@ -389,7 +397,7 @@ Along with the edits to almost all the code structure, there are still a couple 
 What needs to be addressed soon:
 - [ ] Add support for remaining [Resizing Operations](https://sharp.pixelplumbing.com/api-resize)
 - [x] Add support for [Image Operations](https://sharp.pixelplumbing.com/api-operation)
-- [ ] Add support for [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
+- [x] Add support for [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
 - [ ] Add support for [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
 - [ ] Add Images under each option in the Docs
 - [ ] Allow `Base64` encoding for long and explicit param values (Arrays and Objects)
