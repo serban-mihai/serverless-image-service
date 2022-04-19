@@ -18,6 +18,13 @@ exports.defaults = {
     ng: undefined, // negate
     nr: undefined, // normalize
     cl: undefined, // clahe
+    cv: undefined, // convolve
+    th: undefined, // threshold
+    bo: undefined, // boolean
+    li: undefined, // linear
+    rc: undefined, // recomb
+    mo: undefined, // modulate
+
   },
   color: {},
   channel: {},

@@ -1,7 +1,7 @@
 const { beforeHandleRequest } = require("./helpers/security");
 const { getSetting } = require("./helpers/settings");
 const { getOriginalImage, parseImageKey } = require("./helpers/bucket");
-const { parseQueryParams } = require("./helpers/queryParams");
+const { parseQueryParams, getBooleanImage } = require("./helpers/queryParams");
 const sharp = require("sharp");
 
 exports.handler = async (event, context) => {
@@ -68,6 +68,16 @@ exports.handler = async (event, context) => {
     if (operations.ng) sharpObject.negate({ alpha: operations.ng });
     if (operations.nr) sharpObject.normalize(operations.nr);
     if (operations.cl) sharpObject.clahe(operations.cl);
+    if (operations.cv) sharpObject.convolve(operations.cv);
+    if (operations.th) sharpObject.threshold(operations.th);
+    if (operations.bo) {
+      const { operator, source } = operations.bo;
+      const operand = await getBooleanImage(source);
+      sharpObject.boolean(operand, operator);
+    }
+    if (operations.li) sharpObject.linear(operations.li[0], operations.li[1]);
+    if (operations.rc) sharpObject.recomb(operations.rc);
+    if (operations.mo) sharpObject.modulate(operations.mo);
 
     // ? Color Manipulation
     // TODO:

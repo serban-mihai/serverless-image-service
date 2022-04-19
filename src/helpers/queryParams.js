@@ -2,12 +2,13 @@ const { getSetting } = require("./settings");
 const { formats } = require("../lib/formats");
 const { defaults } = require("../lib/defaults");
 const verboseErrors = getSetting("ALLOW_VERBOSE_ERRORS");
+const https = require("https");
 
 /**
  * Parse the query parameters from a request and return their edits values after sanitize
- * @param {Object} params The query parameters object from the request
- * @param {Object} metadata Metadata from the original image
- * @return {Object} An object with final valid edits and options to be applied to the image requested
+ * @param {Object} params - The query parameters object from the request
+ * @param {Object} metadata - Metadata from the original image
+ * @return {Object} - An object with final valid edits and options to be applied to the image requested
  */
 exports.parseQueryParams = (params, metadata) => {
   const { format, size, width, height, hasAlpha } = metadata;
@@ -25,49 +26,66 @@ exports.parseQueryParams = (params, metadata) => {
     : resize.h;
 
   // ? Image Operations
-  // TODO:
-  edits.operations.r = params.hasOwnProperty("r")         // Rotation
+  edits.operations.r = params.hasOwnProperty("r") // Rotation
     ? parseValue(params.r, "integer", verboseErrors)
     : operations.r;
-  edits.operations.flip = params.hasOwnProperty("flip")   // Flip Y
+  edits.operations.flip = params.hasOwnProperty("flip") // Flip Y
     ? parseValue(params.flip, "boolean")
     : operations.flip;
-  edits.operations.flop = params.hasOwnProperty("flop")   // Flop X
+  edits.operations.flop = params.hasOwnProperty("flop") // Flop X
     ? parseValue(params.flop, "boolean")
     : operations.flop;
-  edits.operations.af = params.hasOwnProperty("af")       // Affine
+  edits.operations.af = params.hasOwnProperty("af") // Affine
     ? parseValue(params.af, "array")
     : operations.af;
-  edits.operations.afbg = params.hasOwnProperty("afbg")   // Affine Background
+  edits.operations.afbg = params.hasOwnProperty("afbg") // Affine Background
     ? parseValue(params.afbg, "string")
     : operations.afbg;
-  edits.operations.afi = params.hasOwnProperty("afi")     // Affine Interpolation
+  edits.operations.afi = params.hasOwnProperty("afi") // Affine Interpolation
     ? parseValue(params.afi, "string")
     : operations.afi;
-  edits.operations.sh = params.hasOwnProperty("sh")       // Sharpen
+  edits.operations.sh = params.hasOwnProperty("sh") // Sharpen
     ? parseValue(params.sh, "object")
     : operations.sh;
-  edits.operations.md = params.hasOwnProperty("md")       // Median
+  edits.operations.md = params.hasOwnProperty("md") // Median
     ? parseValue(params.md, "integer", verboseErrors)
     : operations.md;
-  edits.operations.bl = params.hasOwnProperty("bl")       // Blur Sigma
+  edits.operations.bl = params.hasOwnProperty("bl") // Blur Sigma
     ? parseValue(params.bl, "float", verboseErrors)
     : operations.bl;
-  edits.operations.fl = params.hasOwnProperty("fl")       // Flatten
-    ? parseValue(params.fl, "string", verboseErrors)
+  edits.operations.fl = params.hasOwnProperty("fl") // Flatten
+    ? parseValue(params.fl, "string")
     : operations.fl;
-  edits.operations.gm = params.hasOwnProperty("gm")       // Gamma
-    ? parseValue(params.gm, "array", verboseErrors)
+  edits.operations.gm = params.hasOwnProperty("gm") // Gamma
+    ? parseValue(params.gm, "array")
     : operations.gm;
-  edits.operations.ng = params.hasOwnProperty("ng")       // Negate
-    ? parseValue(params.ng, "boolean", verboseErrors)
+  edits.operations.ng = params.hasOwnProperty("ng") // Negate
+    ? parseValue(params.ng, "boolean")
     : operations.ng;
-  edits.operations.nr = params.hasOwnProperty("nr")       // Normalize
-    ? parseValue(params.nr, "boolean", verboseErrors)
+  edits.operations.nr = params.hasOwnProperty("nr") // Normalize
+    ? parseValue(params.nr, "boolean")
     : operations.nr;
-  edits.operations.cl = params.hasOwnProperty("cl")       // Clahe
-    ? parseValue(params.cl, "object", verboseErrors)
+  edits.operations.cl = params.hasOwnProperty("cl") // Clahe
+    ? parseValue(params.cl, "object")
     : operations.cl;
+  edits.operations.cv = params.hasOwnProperty("cv") // Convolve
+    ? parseValue(params.cv, "object")
+    : operations.cv;
+  edits.operations.th = params.hasOwnProperty("th") // Thershold
+    ? parseValue(params.th, "integer", verboseErrors)
+    : operations.th;
+  edits.operations.bo = params.hasOwnProperty("bo") // Boolean
+    ? parseValue(params.bo, "object")
+    : operations.bo;
+  edits.operations.li = params.hasOwnProperty("li") // Linear
+    ? parseValue(params.li, "array")
+    : operations.li;
+  edits.operations.rc = params.hasOwnProperty("rc") // Recomb
+    ? parseValue(params.rc, "array")
+    : operations.rc;
+  edits.operations.mo = params.hasOwnProperty("mo") // Recomb
+    ? parseValue(params.mo, "object")
+    : operations.mo;
 
   // ? Color Manipulation
   // TODO:
@@ -148,8 +166,7 @@ const parseValue = (value, type, negative = true) => {
     const temp = isNaN(parseFloat(value)) ? undefined : parseFloat(value);
     if (temp < 0) parsed = negative ? temp : undefined;
     else parsed = temp;
-  } 
-  else if (type === "boolean" && typeof value !== "boolean") {
+  } else if (type === "boolean" && typeof value !== "boolean") {
     const isNumber = isNaN(parseInt(value)) ? false : true;
     if (isNumber) {
       switch (parseInt(value)) {
@@ -172,4 +189,31 @@ const parseValue = (value, type, negative = true) => {
     }
   } else parsed = value;
   return parsed;
+};
+
+/**
+ * Gets an image to Buffer for Boolean operations, using https to avoid external dependencies
+ * @param {String} url - The URL from where the image to be fetched
+ * @return {Buffer} - The binary Buffer of the image to be applied operand to Boolean
+ */
+exports.getBooleanImage = (url) => {
+  return new Promise((resolve, reject) => {
+    const req = https.get(url, (res) => {
+      const body = [];
+      res
+        .on("data", (chunk) => {
+          body.push(chunk);
+        })
+        .on("end", () => {
+          try {
+            resolve(Buffer.concat(body));
+          } catch (err) {
+            reject(new Error(err));
+          }
+        });
+    });
+    req.on("error", (err) => {
+      reject(new Error(err));
+    });
+  });
 };

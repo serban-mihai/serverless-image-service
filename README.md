@@ -175,6 +175,12 @@ Currently, the following query parameters are supported:
 - `ng=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#negate) | Produces the **Negative** of the image. Value is a `boolean`
 - `nr=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#normalize) | **Normalize** output image contrast by stretching its luminance to cover the full dynamic range, Value is a `boolean` 
 - `cl=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#clahe) | Enhance the clarity of the image by bringing out darker details through **Clahe**. Value is an Object with `width` `height` and optional `maxSlope` params. More in the Docs
+- `cv=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#convolve) | **Convolve** with a specific kernel, more about value in Docs
+- `th=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#threshold) | Any pixel value greater than or equal to the **Threshold** value will be set to 255, otherwise it will be set to 0
+- `bo=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#boolean) | Perform a bitwise **Boolean** operation with operand image. you can pass `and`, `or` and `eor` as `operator`, and a link to an image to fetch to `operand`. Doesn't support local files yet
+- `li=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#linear) | Apply the **Linear** formula a * input + b to the image (levels adjustment)
+- `rc=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#recomb) | **Recomb** the image with the specified matrix.
+- `mo=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#modulate) | **Modulate** transform the image using brightness, saturation, hue rotation, and lightness. See Object structure in Docs
 
 ###### Color Manipulation | [Docs](https://sharp.pixelplumbing.com/api-colour)
 
@@ -212,7 +218,14 @@ Since these parameters can be chained into one request, their actions need to co
 - `/path/image.jpg?gm=[2.2,2.1]`: Apply **Gamma** correction of `2.2` input and `2.3` output on `image.jpg`
 - `/path/image.jpg?ng=true`: Get the **Negative** of `image.jpg`
 - `/path/image.jpg?nr=true`: Apply **Normalize** for full dynamic range luminance over `image.jpg`
-- `/path/image.jpg?cl={"width":3,"height":3}`: Apply histogram equalization **Clahe** over `image,jpg` 
+- `/path/image.jpg?cl={"width":3,"height":3}`: Apply histogram equalization **Clahe** over `image.jpg` 
+- `/path/image.jpg?cv={"width":3,"height":3,"kernel":[-1,0,1,-2,0,2,-1,0,1]}`: Apply **Convolve** over `image.jpg` with custom kernel values
+- `/path/image.jpg?th=128`: All pixels from `image.jpg` >= 125 **Threshold** will get a 255 value
+- `/path/image.jpg?bo={"operator":"and","source":"https://random.domain.com/path/imageToMerge.jpg"}`: Will **Boolean** merge `image.jpg` and the `imageToMerge.jpg` fetched from the `source` url because of the `and` operator. This feature is error prone, mignt be buggy.
+- `/path/image.jpg?li=[1.0,0.0]`: Will pass 1.0 as `a` and 0.0 as `b` to the **Linear** formula `a * input + b` over `image.jpg`
+- `/path/image.jpg?rc=[[0.3588,0.7044,0.1368],[0.2990,0.5870,0.1140],[0.2392,0.4696,0.0912]]`: **Recomb** `image.jpg` to match the matrix of values provided
+- `/path/image.jpg?mo={"brightness":0.5,"saturation":0.5,"hue":90}`: **Modulate** explicit values `brightness`, `saturation` and `hue` over `image.jpg`
+- 
 ###### Examples - Color Manipulation
 
 ###### Examples - Channel Manipulation
@@ -374,7 +387,7 @@ Along with the edits to almost all the code structure, there are still a couple 
 ### TODO
 What needs to be addressed soon:
 - [ ] Add support for remaining [Resizing Operations](https://sharp.pixelplumbing.com/api-resize)
-- [ ] Add support for [Image Operations](https://sharp.pixelplumbing.com/api-operation)
+- [x] Add support for [Image Operations](https://sharp.pixelplumbing.com/api-operation)
 - [ ] Add support for [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
 - [ ] Add support for [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
 - [ ] Add Images under each option in the Docs
