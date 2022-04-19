@@ -123,6 +123,7 @@ functions:
         - "src/assets/**"
         - "src/errors/**"
         - "src/helpers/**"
+        - "!src/helpers/multipart.js"
         - "src/lib/**"
         - "src/get.js"
     handler: "src/get.handler"
@@ -140,7 +141,9 @@ functions:
       patterns:
         - "!**"
         - "src/errors/**"
-        - "src/helpers/**"
+        - "src/helpers/bucket.js"
+        - "src/helpers/security.js"
+        - "src/helpers/settings.js"
         - "src/list.js"
     handler: "src/list.handler"
     layers:
@@ -157,6 +160,7 @@ functions:
         - "!**"
         - "src/errors/**"
         - "src/helpers/**"
+        - "!src/helpers/queryParams.js"
         - "src/post.js"
     handler: "src/post.handler"
     layers:
@@ -174,7 +178,9 @@ functions:
       patterns:
         - "!**"
         - "src/errors/**"
-        - "src/helpers/**"
+        - "src/helpers/bucket.js"
+        - "src/helpers/security.js"
+        - "src/helpers/settings.js"
         - "src/delete.js"
     handler: "src/delete.handler"
     layers:

@@ -15,7 +15,19 @@ The advantages of having your custom solution are flexibility, lower costs, and 
       - [GET - List Images](#get---list-images)
       - [GET - Get Image](#get---get-image)
         - [Supported Query Parameters](#supported-query-parameters)
+          - [Resizing Operations | Docs](#resizing-operations--docs)
+          - [Image Operations | Docs](#image-operations--docs)
+          - [Color Manipulation | Docs](#color-manipulation--docs)
+          - [Channel Manipulation | Docs](#channel-manipulation--docs)
+          - [Compositing Images | Docs](#compositing-images--docs)
+          - [Output Options | Docs](#output-options--docs)
         - [Use Cases Examples](#use-cases-examples)
+          - [Examples - Resizing Operations](#examples---resizing-operations)
+          - [Examples - Image Operations](#examples---image-operations)
+          - [Examples - Color Manipulation](#examples---color-manipulation)
+          - [Examples - Channel Manipulation](#examples---channel-manipulation)
+          - [Examples - Compositing Images](#examples---compositing-images)
+          - [Examples - Output Options](#examples---output-options)
       - [POST - Upload Images](#post---upload-images)
       - [DELETE - Remove Image](#delete---remove-image)
   - [Setup](#setup)
@@ -116,28 +128,6 @@ This endpoint has 2 purposes, based on receiving query parameters or not:
 - `Without query params`: It returns the original file from the key provided (path + filename)
 - `With query params`: Attempts to fetch the original file and processes it based on what options are supported before returning it.
 
-##### Supported Query Parameters
-Currently, the following query parameters are supported:
-- `w=Number`: A positive number of **px** that represents the new **width** which the image is requested to scale at
-- `h=Number`: A positive number of **px** that represents the new **height** which the image is requested to scale at 
-- `q=Number`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
-- `fm=String`: The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
-- `ll=Boolean`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.   
-- `wm=String` The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
-- `gr=String` The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
-
-Since these parameters can be chained into one request, their actions need to coexist in the final image. Some rules apply when for example you get both `w` and `h` in the same request, or when you have just one of them but also `q`
-> Order doesn't matter between Query Parameters
-
-##### Use Cases Examples
-- `/path/image.jpg?w=500`: Will scale down `image.jpg` **width** to **500px** if its original width is higher, if the original width is lower, will NOT scale up, it will skip resizing maintaining aspect-ratio. Height is downscaled progressively in proportion to the new width
-- `/path/image.jpg?h=500`: Same as above but this time comparisons and dimensions are related to `image.jpg` **heights**
-- `/path/image.jpg?w=500&h=100`: Unless the values provided are not complementary related to the originals, this will crop `image.jpg` to be **500px width** and **100px height**. If any of the values is bigger than its original counterpart resize is skipped and the original image is returned
-- `/path/image.jpg?q=57`: This will reduce the **quality** of `image.jpg` by **43%** before returning it. No scaling is applied
-- `/path/image.jpg?w=250&q=30`: For last, it will attempt to scale down `image.jpg` to **250px width** (with height proportionally scaled-down as well) and then reduce the quality of the scaled image by **70%**
-- `/path/image.jpg?w=100&fm=webp&ll=true`: Resizes `image.jpg` to **100px width** with proportional height and converts it to be in `webp` format, enabling **lossless** convertion.
-- `/path/image.jpg?wm=companyLogo.png&gr=southwest`: Applies the `companyLogo.png` watermark over `image.jpg` in `southwest` position aka. bottom-left. Pro-tip, leave some padding when designing the watermark, currently there is no offset option that works with `gravity`
-
 For some codec and config reasons, some formats that are applied `q=70` or higher, output a bigger size image than the original.
 > `GET` https://domain.com/random/path/image.jpg
 
@@ -163,6 +153,91 @@ For some codec and config reasons, some formats that are applied `q=70` or highe
     "message": "Error: Expected positive integer for height but received -350 of type number"
   }
   ```
+
+##### Supported Query Parameters
+Currently, the following query parameters are supported:
+###### Resizing Operations | [Docs](https://sharp.pixelplumbing.com/api-resize)
+- `w=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **width** which the image is requested to scale at
+- `h=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **height** which the image is requested to scale at
+ 
+###### Image Operations | [Docs](https://sharp.pixelplumbing.com/api-operation)
+- `r=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#rotate) | An integer number that represents the **rotation degree** at which the image will be rotated. Negative numbers allowed for counter-clockwise rotations.
+- `flip=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flip) | If true will **mirror** the image on the **Y axis**
+- `flop=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flop) | If true will **mirror** the image on the **X axis**
+- `af=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#affine) | If a valid `Array` is passed will perform an **affine transform** on the image based on offset values inside the `Array`
+- `afbg=<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The **background in Hex** for the affine transform, defaults to full black `#000000`
+- `afi=<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The Interpolator for the affine transform, can be one of `nearest`, `bilinear`, `bicubic`, `locallyBoundedBicubic`, `nohalo`, `vertexSplitQuadraticBasisSpline`. It defaults to `bicubic`
+- `sh=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#sharpen) | **Sharpen** the image, requires a valid JSON Object as value, more details about individual keys in the Docs
+- `md=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#median) | Apply a **Median filter** over the image. Value is an `integer`, represents the square mask NxN 
+- `bl=<Float>`: [📝](https://sharp.pixelplumbing.com/api-operation#blur) | **Blur** the image by the value, which represents the **sigma** of the Gaussian mask. Values accepted in the range 0.3 and 1000, `float` or `integer` types.
+- `fl=<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#flatten) | **Flatten**, merge alpha transparency channel, if any, with a background, then remove the alpha channel. Value is a **Hex color**
+- `gm=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#gamma) | **Gamma** correction. Value is an `array of floats`, first element is `gamma in` second is `gamma out`
+- `ng=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#negate) | Produces the **Negative** of the image. Value is a `boolean`
+- `nr=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#normalize) | **Normalize** output image contrast by stretching its luminance to cover the full dynamic range, Value is a `boolean` 
+- `cl=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#clahe) | Enhance the clarity of the image by bringing out darker details through **Clahe**. Value is an Object with `width` `height` and optional `maxSlope` params. More in the Docs
+- `cv=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#convolve) | **Convolve** with a specific kernel, more about value in Docs
+- `th=<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#threshold) | Any pixel value greater than or equal to the **Threshold** value will be set to 255, otherwise it will be set to 0
+- `bo=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#boolean) | Perform a bitwise **Boolean** operation with operand image. you can pass `and`, `or` and `eor` as `operator`, and a link to an image to fetch to `operand`. Doesn't support local files yet
+- `li=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#linear) | Apply the **Linear** formula a * input + b to the image (levels adjustment)
+- `rc=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#recomb) | **Recomb** the image with the specified matrix.
+- `mo=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#modulate) | **Modulate** transform the image using brightness, saturation, hue rotation, and lightness. See Object structure in Docs
+
+###### Color Manipulation | [Docs](https://sharp.pixelplumbing.com/api-colour)
+
+###### Channel Manipulation | [Docs](https://sharp.pixelplumbing.com/api-channel)
+
+###### Compositing Images | [Docs](https://sharp.pixelplumbing.com/api-composite)
+- `wm=<String>` [📝](https://sharp.pixelplumbing.com/api-composite#composite) | The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
+- `gr=<String>` [📝](https://sharp.pixelplumbing.com/api-composite#parameters) | The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
+
+###### Output Options | [Docs](https://sharp.pixelplumbing.com/api-resize)
+- `q=<Integer>`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
+- `fm=<String>`: [📝](https://sharp.pixelplumbing.com/api-output#toformat) | The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
+- `ll=<Boolean>`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.
+
+Since these parameters can be chained into one request, their actions need to coexist in the final image. Some rules apply when for example you get both `w` and `h` in the same request, or when you have just one of them but also `q`
+> Order doesn't matter between Query Parameters
+
+##### Use Cases Examples
+###### Examples - Resizing Operations
+- `/path/image.jpg?w=500`: Will scale down `image.jpg` **width** to **500px** if its original width is higher, if the original width is lower, will NOT scale up, it will skip resizing maintaining aspect-ratio. Height is downscaled progressively in proportion to the new width
+- `/path/image.jpg?h=500`: Same as above but this time comparisons and dimensions are related to `image.jpg` **heights**
+- `/path/image.jpg?w=500&h=100`: Unless the values provided are not complementary related to the originals, this will crop `image.jpg` to be **500px width** and **100px height**. If any of the values is bigger than its original counterpart resize is skipped and the original image is returned
+
+###### Examples - Image Operations
+- `/path/image.jpg?r=33`: Will rotate `image.jpg` of **33 degrees clockwise**. Warning, the canvas containing the image will scale to new dimensions to include the whole image corners!
+- `/path/image.jpg?r=-75`: Will rotate `image.jpg` of **75 degrees counter-clockwise**. Same warning as above applies here as well
+- `/path/image.jpg?flip=true&flop=1`: Will mirror `image.jpg` on **both X and Y axis** (diagonal mirror). You can pass both `true` `false` and `0` `1` values 
+- `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]`: Will perform an **affine transform** over `image.jpg`
+- `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afbg=#FFFFFF`: Will perform an affine transform over `image.jpg` and convert the background to full white `#FFFFFF` 
+- `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afi=locallyBoundedBicubic`: Will perform an affine transform over `image.jpg` and apply an interpolator of `lbb` 
+- `/path/image.jpg?sh={"sigma":2,"m1":0,"m2":3,"x1":3,"y2":15,"y3":15}`: Will **Sharpen** `image.jpg` based on the parameters contained in the value Object
+- `/path/image.jpg?md=10`: Apply **Median** filter over `image.jpg`
+- `/path/image.jpg?bl=2.2`: **Blur** `image.jpg` with a sigma of `2.2` 
+- `/path/image.jpg?fl=#F0A703`: Apply **Flatten** filter over `image.jpg` mergin alpha transparency with color `#F0A703` (yellowish)
+- `/path/image.jpg?gm=[2.2,2.1]`: Apply **Gamma** correction of `2.2` input and `2.3` output on `image.jpg`
+- `/path/image.jpg?ng=true`: Get the **Negative** of `image.jpg`
+- `/path/image.jpg?nr=true`: Apply **Normalize** for full dynamic range luminance over `image.jpg`
+- `/path/image.jpg?cl={"width":3,"height":3}`: Apply histogram equalization **Clahe** over `image.jpg` 
+- `/path/image.jpg?cv={"width":3,"height":3,"kernel":[-1,0,1,-2,0,2,-1,0,1]}`: Apply **Convolve** over `image.jpg` with custom kernel values
+- `/path/image.jpg?th=128`: All pixels from `image.jpg` >= 125 **Threshold** will get a 255 value
+- `/path/image.jpg?bo={"operator":"and","source":"https://random.domain.com/path/imageToMerge.jpg"}`: Will **Boolean** merge `image.jpg` and the `imageToMerge.jpg` fetched from the `source` url because of the `and` operator. This feature is error prone, mignt be buggy.
+- `/path/image.jpg?li=[1.0,0.0]`: Will pass 1.0 as `a` and 0.0 as `b` to the **Linear** formula `a * input + b` over `image.jpg`
+- `/path/image.jpg?rc=[[0.3588,0.7044,0.1368],[0.2990,0.5870,0.1140],[0.2392,0.4696,0.0912]]`: **Recomb** `image.jpg` to match the matrix of values provided
+- `/path/image.jpg?mo={"brightness":0.5,"saturation":0.5,"hue":90}`: **Modulate** explicit values `brightness`, `saturation` and `hue` over `image.jpg`
+- 
+###### Examples - Color Manipulation
+
+###### Examples - Channel Manipulation
+
+###### Examples - Compositing Images
+- `/path/image.jpg?wm=companyLogo.png&gr=southwest`: Applies the `companyLogo.png` watermark over `image.jpg` in `southwest` position aka. bottom-left. Pro-tip, leave some padding when designing the watermark, currently there is no offset option that works with `gravity`
+
+###### Examples - Output Options
+- `/path/image.jpg?q=57`: This will reduce the **quality** of `image.jpg` by **43%** before returning it. No scaling is applied
+- `/path/image.jpg?w=250&q=30`: For last, it will attempt to scale down `image.jpg` to **250px width** (with height proportionally scaled-down as well) and then reduce the quality of the scaled image by **70%**
+- `/path/image.jpg?w=100&fm=webp&ll=true`: Resizes `image.jpg` to **100px width** with proportional height and converts it to be in `webp` format, enabling **lossless** convertion.
+
 #### POST - Upload Images
 Uploads one or many images to a specific path inside an **S3 Bucket**. Once provided `/path/to/upload` the function will attempt to upload all the files provided under it, if any of the selected filenames are already contained inside the same path, it will throw a conflict error.
 
@@ -259,14 +334,17 @@ Clone and install NPM dependencies:
 - `git clone https://github.com/serban-mihai/serverless-image-service.git`
 - `cd serverless-image-service && npm i`
 
-There are a couple of things to be done before deploying:
+There are a couple of things to be done **before deploying**:
 1. Create an AWS Certificate in [ACM](https://aws.amazon.com/certificate-manager/) on the `us-east-1` region that belongs to your `domain.com` and register the `CNAME` inside your external CDN or in [Route53](https://aws.amazon.com/route53/). Also, remember to apply the necessary adjustments to your CDN for SSL/TLS traffic to avoid funky responses from API Gateway
 2. Adjust `example-s3-bucket-policy.json` by changing the `<CUSTOM_DOMAIN>` with your `domain.com`. You will have multiple files for different environments if you use different domains or subdomains
 3. Copy `example.settings.yml` to `settings.yml` and adjust missing values such as the `region`, `CUSTOM_DOMAIN`, and `ACM_CERTIFICATE_ARN` which is the ID of the Cert you created at step one. Note that the `SOURCE_BUCKET` and `CUSTOM_DOMAIN` will have to be equal within the same stage
 4. Make sure not to already have an S3 Bucket on AWS with the same name of `CUSTOM_DOMAIN`
+5. `Optional` Place inside `src/assets/` any **Watermark** of your choice to apply it further over images.
+6. `Optional` If you don't want to include **GET** (List), **POST** and **DELETE** routes deployed you can just comment them in `serverless.yml`. That will just deploy the **GET** that will serve assets to clients, leaving up to you to upload manually assets within the `S3 Bucket` or integrate this operation with another service.
 
 The reason we are creating the Certificate in `us-east-1` is that for some reason AWS won't accept to create resources in other regions such as `eu-central-1` if the Certificate also belongs in `eu-central-1`
-After the above points are checked everything should be ready to go for deployment.
+After the above points are checked everything should be ready to go for [deployment](#how-to-deploy).
+- After `CloudFormation Stack` deploys, register a `CNAME` of the created `CloudFront Distribution` within your **external CDN DNS** or **Route53** and **Proxy** traffic through it. The `distribution` looks like: `randomhash0123.cloudfront.net`. 
 
 ### Debugging
 To debug endpoints I recommend the [Thunder Client](https://www.thunderclient.com/) extension for VSCode, it's feature-rich and has everything you need to send requests and debug endpoints. If you don't find yourself comfortable you can also use **Postman** instead, or `curl` if you're a true hardcore!
@@ -308,9 +386,16 @@ Along with the edits to almost all the code structure, there are still a couple 
 
 ### TODO
 What needs to be addressed soon:
-- [ ] Support as many query params as possible mapped from [Sharp](https://sharp.pixelplumbing.com/api-operation) including the `fm=` parameter to return custom formats.
-- [ ] Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
+- [ ] Add support for remaining [Resizing Operations](https://sharp.pixelplumbing.com/api-resize)
+- [x] Add support for [Image Operations](https://sharp.pixelplumbing.com/api-operation)
+- [ ] Add support for [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
+- [ ] Add support for [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
+- [ ] Add Images under each option in the Docs
+- [ ] Allow `Base64` encoding for long and explicit param values (Arrays and Objects)
+- [ ] Create presets for popular transforms that can be applied all at once with a special query param and have priority over other query parameters
+- [ ] Extend `DELETE` endpoint to remove multiple assets at once, similar to `POST` but reversed.
 - [x] Personal favourite, add watermark with custom position, can be achieved with [Compositing](https://sharp.pixelplumbing.com/api-composite)
+- [ ] Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
 - [ ] Test the security `s=""` query parameter or change it with another solution
 - [ ] Review security and `binaryMediaTypes` from API Gateway to disallow certain file types to be uploaded/served
 - [ ] Test uploading other files besides images, restrict or let pass other MIME Types with a flag on Serverless

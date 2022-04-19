@@ -64,8 +64,107 @@
               "key": "gr",
               "value": "southeast",
               "description": "The position of the watermark, cardinal"
+            },
+            {
+              "key": "r",
+              "value": "0",
+              "description": "Rotation degree of the image"
+            },
+            {
+              "key": "flip",
+              "value": "false",
+              "description": "Mirror on Y Axis"
+            },
+            {
+              "key": "flop",
+              "value": "false",
+              "description": "Mirror on X Axis"
+            },
+            {
+              "key": "af",
+              "value": "[[1,0.3],[0.1,0.7]]",
+              "description": "Affine transform coordinates"
+            },
+            {
+              "key": "afbg",
+              "value": "#FFFFFF",
+              "description": "Background of the affine transform"
+            },
+            {
+              "key": "afi",
+              "value": "nohalo",
+              "description": "Interpolation of the affine transform"
+            },
+            {
+              "key": "sh",
+              "value": "{\"sigma\":2,\"m1\":0,\"m2\":3,\"x1\":3,\"y2\":15,\"y3\":15}",
+              "description": "Sharpen"
+            },
+            {
+              "key": "md",
+              "value": "10",
+              "description": "Median"
+            },
+            {
+              "key": "bl",
+              "value": "2.2",
+              "description": "Blur Sigma"
+            },
+            {
+              "key": "fl",
+              "value": "#F0A703",
+              "description": "Flatten"
+            },
+            {
+              "key": "gm",
+              "value": "[2.2,2.1]",
+              "description": "Gamma"
+            },
+            {
+              "key": "ng",
+              "value": "false",
+              "description": "Negate"
+            },
+            {
+              "key": "nr",
+              "value": "false",
+              "description": "Normalize"
+            },
+            {
+              "key": "cl",
+              "value": "{\"width\":3,\"height\":3}",
+              "description": "Clahe"
+            },
+            {
+              "key": "cv",
+              "value": "{\"width\":3,\"height\":3,\"kernel\":[-1,0,1,-2,0,2,-1,0,1]}",
+              "description": "Convolve"
+            },
+            {
+              "key": "th",
+              "value": "128",
+              "description": "Threshold"
+            },
+            {
+              "key": "bo",
+              "value": "{\"operator\":\"and\",\"source\":\"https://images.unsplash.com/photo-1510915361894-db8b60106cb1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=350&q=80\"}",
+              "description": "Boolean"
+            },
+            {
+              "key": "li",
+              "value": "[1.0,0.0]",
+              "description": "Linear"
+            },
+            {
+              "key": "rc",
+              "value": "[[0.3588,0.7044,0.1368],[0.2990,0.5870,0.1140],[0.2392,0.4696,0.0912]]",
+              "description": "Recomb"
+            },
+            {
+              "key": "mo",
+              "value": "{\"brightness\":0.5,\"saturation\":0.5,\"hue\":90}",
+              "description": "Modulate"
             }
-
           ]
         }
       },

@@ -37,7 +37,50 @@
         { "name": "fm", "value": "webp", "isPath": false },
         { "name": "ll", "value": "false", "isPath": false },
         { "name": "wm", "value": "watermark.png", "isPath": false },
-        { "name": "gr", "value": "southeast", "isPath": false }
+        { "name": "gr", "value": "southeast", "isPath": false },
+        { "name": "r", "value": "0", "isPath": false },
+        { "name": "flip", "value": "false", "isPath": false },
+        { "name": "flop", "value": "false", "isPath": false },
+        { "name": "af", "value": "[[1,0.3],[0.1,0.7]]", "isPath": false },
+        { "name": "afbg", "value": "#FFFFFF", "isPath": false },
+        {
+          "name": "sh",
+          "value": "{\"sigma\":2,\"m1\":0,\"m2\":3,\"x1\":3,\"y2\":15,\"y3\":15}",
+          "isPath": false
+        },
+        { "name": "md", "value": "10", "isPath": false },
+        { "name": "bl", "value": "2.2", "isPath": false },
+        { "name": "fl", "value": "#F0A703", "isPath": false },
+        { "name": "gm", "value": "[2.2,2.1]", "isPath": false },
+        { "name": "ng", "value": "false", "isPath": false },
+        { "name": "nr", "value": "false", "isPath": false },
+        {
+          "name": "cl",
+          "value": "{\"width\":3,\"height\":3}",
+          "isPath": false
+        },
+        {
+          "name": "cv",
+          "value": "{\"width\":3,\"height\":3,\"kernel\":[-1,0,1,-2,0,2,-1,0,1]}",
+          "isPath": false
+        },
+        { "name": "th", "value": "128", "isPath": false },
+        {
+          "name": "bo",
+          "value": "{\"operator\":\"and\",\"source\":\"https://images.unsplash.com/photo-1510915361894-db8b60106cb1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=350&q=80\"}",
+          "isPath": false
+        },
+        { "name": "li", "value": "[1.0,0.0]", "isPath": false },
+        {
+          "name": "rc",
+          "value": "[[0.3588,0.7044,0.1368],[0.2990,0.5870,0.1140],[0.2392,0.4696,0.0912]]",
+          "isPath": false
+        },
+        {
+          "name": "mo",
+          "value": "{\"brightness\":0.5,\"saturation\":0.5,\"hue\":90}",
+          "isPath": false
+        }
       ],
       "tests": []
     },
