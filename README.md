@@ -15,12 +15,12 @@ The advantages of having your custom solution are flexibility, lower costs, and 
       - [GET - List Images](#get---list-images)
       - [GET - Get Image](#get---get-image)
         - [Supported Query Parameters](#supported-query-parameters)
-          - [Resizing Operations](#resizing-operations)
-          - [Image Operations](#image-operations)
-          - [Color Manipulation](#color-manipulation)
-          - [Channel Manipulation](#channel-manipulation)
-          - [Compositing Images](#compositing-images)
-          - [Output Options](#output-options)
+          - [Resizing Operations Docs](#resizing-operations-docs)
+          - [Image Operations Docs](#image-operations-docs)
+          - [Color Manipulation Docs](#color-manipulation-docs)
+          - [Channel Manipulation Docs](#channel-manipulation-docs)
+          - [Compositing Images Docs](#compositing-images-docs)
+          - [Output Options Docs](#output-options-docs)
         - [Use Cases Examples](#use-cases-examples)
           - [Examples - Resizing Operations](#examples---resizing-operations)
           - [Examples - Image Operations](#examples---image-operations)
@@ -156,24 +156,24 @@ For some codec and config reasons, some formats that are applied `q=70` or highe
 
 ##### Supported Query Parameters
 Currently, the following query parameters are supported:
-###### [Resizing Operations](https://sharp.pixelplumbing.com/api-resize)
-- `w=<Number>`: A positive number of **px** that represents the new **width** which the image is requested to scale at
-- `h=<Number>`: A positive number of **px** that represents the new **height** which the image is requested to scale at
+###### Resizing Operations [Docs](https://sharp.pixelplumbing.com/api-resize)
+- `w=<Number>`: [Docs](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **width** which the image is requested to scale at
+- `h=<Number>`: [Docs](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **height** which the image is requested to scale at
  
-###### [Image Operations](https://sharp.pixelplumbing.com/api-operation)
-- `r=<Number>`: An integer number that represents the **rotation degree** at which the image will be rotated. Negative numbers allowed for counter-clockwise rotations.
-- `flip=<Boolean>`: If true will **mirror** the image on the **Y axis**
-- `flop=<Boolean>`: If true will **mirror** the image on the **X axis**
+###### Image Operations [Docs](https://sharp.pixelplumbing.com/api-operation)
+- `r=<Number>`: [Docs](https://sharp.pixelplumbing.com/api-operation#rotate) | An integer number that represents the **rotation degree** at which the image will be rotated. Negative numbers allowed for counter-clockwise rotations.
+- `flip=<Boolean>`: [Docs](https://sharp.pixelplumbing.com/api-operation#flip) | If true will **mirror** the image on the **Y axis**
+- `flop=<Boolean>`: [Docs](https://sharp.pixelplumbing.com/api-operation#flop) | If true will **mirror** the image on the **X axis**
 
-###### [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
+###### Color Manipulation [Docs](https://sharp.pixelplumbing.com/api-colour)
 
-###### [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
+###### Channel Manipulation [Docs](https://sharp.pixelplumbing.com/api-channel)
 
-###### [Compositing Images](https://sharp.pixelplumbing.com/api-composite)
+###### Compositing Images [Docs](https://sharp.pixelplumbing.com/api-composite)
 - `wm=<String>` The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
 - `gr=<String>` The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
 
-###### [Output Options](https://sharp.pixelplumbing.com/api-resize)
+###### Output Options [Docs](https://sharp.pixelplumbing.com/api-resize)
 - `q=<Number>`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
 - `fm=<String>`: The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
 - `ll=<Boolean>`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.
@@ -300,14 +300,17 @@ Clone and install NPM dependencies:
 - `git clone https://github.com/serban-mihai/serverless-image-service.git`
 - `cd serverless-image-service && npm i`
 
-There are a couple of things to be done before deploying:
+There are a couple of things to be done **before deploying**:
 1. Create an AWS Certificate in [ACM](https://aws.amazon.com/certificate-manager/) on the `us-east-1` region that belongs to your `domain.com` and register the `CNAME` inside your external CDN or in [Route53](https://aws.amazon.com/route53/). Also, remember to apply the necessary adjustments to your CDN for SSL/TLS traffic to avoid funky responses from API Gateway
 2. Adjust `example-s3-bucket-policy.json` by changing the `<CUSTOM_DOMAIN>` with your `domain.com`. You will have multiple files for different environments if you use different domains or subdomains
 3. Copy `example.settings.yml` to `settings.yml` and adjust missing values such as the `region`, `CUSTOM_DOMAIN`, and `ACM_CERTIFICATE_ARN` which is the ID of the Cert you created at step one. Note that the `SOURCE_BUCKET` and `CUSTOM_DOMAIN` will have to be equal within the same stage
 4. Make sure not to already have an S3 Bucket on AWS with the same name of `CUSTOM_DOMAIN`
+5. `Optional` Place inside `src/assets/` any **Watermark** of your choice to apply it further over images.
+6. `Optional` If you don't want to include **GET** (List), **POST** and **DELETE** routes deployed you can just comment them in `serverless.yml`. That will just deploy the **GET** that will serve assets to clients, leaving up to you to upload manually assets within the `S3 Bucket` or integrate this operation with another service.
 
 The reason we are creating the Certificate in `us-east-1` is that for some reason AWS won't accept to create resources in other regions such as `eu-central-1` if the Certificate also belongs in `eu-central-1`
-After the above points are checked everything should be ready to go for deployment.
+After the above points are checked everything should be ready to go for [deployment](#how-to-deploy).
+- After `CloudFormation Stack` deploys, register a `CNAME` of the created `CloudFront Distribution` within your **external CDN DNS** or **Route53** and **Proxy** traffic through it. The `distribution` looks like: `randomhash0123.cloudfront.net`. 
 
 ### Debugging
 To debug endpoints I recommend the [Thunder Client](https://www.thunderclient.com/) extension for VSCode, it's feature-rich and has everything you need to send requests and debug endpoints. If you don't find yourself comfortable you can also use **Postman** instead, or `curl` if you're a true hardcore!
@@ -353,6 +356,7 @@ What needs to be addressed soon:
 - [ ] Add support for [Image Operations](https://sharp.pixelplumbing.com/api-operation)
 - [ ] Add support for [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
 - [ ] Add support for [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
+- [ ] Create presets for popular transforms that can be applied all at once with a special query param and have priority over other query parameters
 - [ ] Extend `DELETE` endpoint to remove multiple assets at once, similar to `POST` but reversed.
 - [x] Personal favourite, add watermark with custom position, can be achieved with [Compositing](https://sharp.pixelplumbing.com/api-composite)
 - [ ] Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
