@@ -15,12 +15,12 @@ The advantages of having your custom solution are flexibility, lower costs, and 
       - [GET - List Images](#get---list-images)
       - [GET - Get Image](#get---get-image)
         - [Supported Query Parameters](#supported-query-parameters)
-          - [Resizing Operations Docs](#resizing-operations-docs)
-          - [Image Operations Docs](#image-operations-docs)
-          - [Color Manipulation Docs](#color-manipulation-docs)
-          - [Channel Manipulation Docs](#channel-manipulation-docs)
-          - [Compositing Images Docs](#compositing-images-docs)
-          - [Output Options Docs](#output-options-docs)
+          - [Resizing Operations | Docs](#resizing-operations--docs)
+          - [Image Operations | Docs](#image-operations--docs)
+          - [Color Manipulation | Docs](#color-manipulation--docs)
+          - [Channel Manipulation | Docs](#channel-manipulation--docs)
+          - [Compositing Images | Docs](#compositing-images--docs)
+          - [Output Options | Docs](#output-options--docs)
         - [Use Cases Examples](#use-cases-examples)
           - [Examples - Resizing Operations](#examples---resizing-operations)
           - [Examples - Image Operations](#examples---image-operations)
@@ -156,26 +156,30 @@ For some codec and config reasons, some formats that are applied `q=70` or highe
 
 ##### Supported Query Parameters
 Currently, the following query parameters are supported:
-###### Resizing Operations [Docs](https://sharp.pixelplumbing.com/api-resize)
-- `w=<Number>`: [Docs](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **width** which the image is requested to scale at
-- `h=<Number>`: [Docs](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **height** which the image is requested to scale at
+###### Resizing Operations | [Docs](https://sharp.pixelplumbing.com/api-resize)
+- `w=<Number>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **width** which the image is requested to scale at
+- `h=<Number>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **height** which the image is requested to scale at
  
-###### Image Operations [Docs](https://sharp.pixelplumbing.com/api-operation)
-- `r=<Number>`: [Docs](https://sharp.pixelplumbing.com/api-operation#rotate) | An integer number that represents the **rotation degree** at which the image will be rotated. Negative numbers allowed for counter-clockwise rotations.
-- `flip=<Boolean>`: [Docs](https://sharp.pixelplumbing.com/api-operation#flip) | If true will **mirror** the image on the **Y axis**
-- `flop=<Boolean>`: [Docs](https://sharp.pixelplumbing.com/api-operation#flop) | If true will **mirror** the image on the **X axis**
+###### Image Operations | [Docs](https://sharp.pixelplumbing.com/api-operation)
+- `r=<Number>`: [📝](https://sharp.pixelplumbing.com/api-operation#rotate) | An integer number that represents the **rotation degree** at which the image will be rotated. Negative numbers allowed for counter-clockwise rotations.
+- `flip=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flip) | If true will **mirror** the image on the **Y axis**
+- `flop=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flop) | If true will **mirror** the image on the **X axis**
+- `af=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#affine) | If a valid `Array` is passed will perform an **affine transform** on the image based on offset values inside the `Array`
+- `afbg=<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The **background in Hex** for the affine transform, defaults to full black `#000000`
+- `afi=<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The Interpolator for the affine transform, can be one of `nearest`, `bilinear`, `bicubic`, `locallyBoundedBicubic`, `nohalo`, `vertexSplitQuadraticBasisSpline`. It defaults to `bicubic`
 
-###### Color Manipulation [Docs](https://sharp.pixelplumbing.com/api-colour)
 
-###### Channel Manipulation [Docs](https://sharp.pixelplumbing.com/api-channel)
+###### Color Manipulation | [Docs](https://sharp.pixelplumbing.com/api-colour)
 
-###### Compositing Images [Docs](https://sharp.pixelplumbing.com/api-composite)
-- `wm=<String>` The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
-- `gr=<String>` The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
+###### Channel Manipulation | [Docs](https://sharp.pixelplumbing.com/api-channel)
 
-###### Output Options [Docs](https://sharp.pixelplumbing.com/api-resize)
+###### Compositing Images | [Docs](https://sharp.pixelplumbing.com/api-composite)
+- `wm=<String>` [📝](https://sharp.pixelplumbing.com/api-composite#composite) | The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
+- `gr=<String>` [📝](https://sharp.pixelplumbing.com/api-composite#parameters) | The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
+
+###### Output Options | [Docs](https://sharp.pixelplumbing.com/api-resize)
 - `q=<Number>`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
-- `fm=<String>`: The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
+- `fm=<String>`: [📝](https://sharp.pixelplumbing.com/api-output#toformat) | The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
 - `ll=<Boolean>`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.
 
 Since these parameters can be chained into one request, their actions need to coexist in the final image. Some rules apply when for example you get both `w` and `h` in the same request, or when you have just one of them but also `q`
@@ -190,8 +194,11 @@ Since these parameters can be chained into one request, their actions need to co
 ###### Examples - Image Operations
 - `/path/image.jpg?r=33`: Will rotate `image.jpg` of **33 degrees clockwise**. Warning, the canvas containing the image will scale to new dimensions to include the whole image corners!
 - `/path/image.jpg?r=-75`: Will rotate `image.jpg` of **75 degrees counter-clockwise**. Same warning as above applies here as well
-- `/path/image.jpg?flip=true&flop=1`: Will mirror `image.jpg` on **both X and Y axis** (diagonal mirror). You can pass both `true` `false` and `0` `1` values. 
-
+- `/path/image.jpg?flip=true&flop=1`: Will mirror `image.jpg` on **both X and Y axis** (diagonal mirror). You can pass both `true` `false` and `0` `1` values 
+- `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]`: Will perform an affine transform over `image.jpg`
+- `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afbg=#FFFFFF`: Will perform an affine transform over `image.jpg` and convert the background to full white `#FFFFFF` 
+- `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afi=locallyBoundedBicubic`: Will perform an affine transform over `image.jpg` and apply an interpolator of `lbb` 
+   
 ###### Examples - Color Manipulation
 
 ###### Examples - Channel Manipulation

@@ -64,8 +64,37 @@
               "key": "gr",
               "value": "southeast",
               "description": "The position of the watermark, cardinal"
+            },
+            {
+              "key": "r",
+              "value": "0",
+              "description": "Rotation degree of the image"
+            },
+            {
+              "key": "flip",
+              "value": "false",
+              "description": "Mirror on Y Axis"
+            },
+            {
+              "key": "flop",
+              "value": "false",
+              "description": "Mirror on X Axis"
+            },
+            {
+              "key": "af",
+              "value": "[[1,0.3],[0.1,0.7]]",
+              "description": "Affine transform coordinates"
+            },
+            {
+              "key": "afbg",
+              "value": "#FFFFFF",
+              "description": "Background of the affine transform"
+            },
+            {
+              "key": "afi",
+              "value": "nohalo",
+              "description": "Interpolation of the affine transform"
             }
-
           ]
         }
       },

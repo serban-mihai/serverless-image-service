@@ -35,6 +35,15 @@ exports.parseQueryParams = (params, metadata) => {
   edits.operations.flop = params.hasOwnProperty("flop")
     ? parseValue(params.flop, "boolean")
     : operations.flop;
+  edits.operations.af = params.hasOwnProperty("af")
+    ? parseValue(params.af, "array")
+    : operations.af;
+  edits.operations.afbg = params.hasOwnProperty("afbg")
+    ? parseValue(params.afbg, "string")
+    : operations.afbg;
+  edits.operations.afi = params.hasOwnProperty("afi")
+    ? parseValue(params.afi, "string")
+    : operations.afi;
 
   // ? Color Manipulation
   // TODO:
@@ -97,7 +106,14 @@ exports.parseQueryParams = (params, metadata) => {
  */
 const parseValue = (value, type, negative = true) => {
   let parsed;
-  if (type === "string" && typeof value !== "string") parsed = value.toString();
+  if (type === "array" && typeof value !== "array") {
+    try {
+      parsed = JSON.parse(value);
+    } catch (err) {
+      parsed = undefined; // defaulting to undefined to prevend useless trigger on wrong param value
+    }
+  } else if (type === "string" && typeof value !== "string")
+    parsed = value.toString();
   else if (type === "number" && typeof value !== "number") {
     const temp = isNaN(parseInt(value)) ? undefined : parseInt(value);
     if (temp < 0) parsed = negative ? temp : undefined;

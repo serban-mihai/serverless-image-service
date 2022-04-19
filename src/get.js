@@ -52,6 +52,11 @@ exports.handler = async (event, context) => {
     if (operations.r) sharpObject.rotate(operations.r);
     if (operations.flip) sharpObject.flip();
     if (operations.flop) sharpObject.flop();
+    if (operations.af)
+      sharpObject.affine(operations.af, {
+        background: operations.afbg,
+        interpolator: sharp.interpolators[operations.afi],
+      });
 
     // ? Color Manipulation
     // TODO:
