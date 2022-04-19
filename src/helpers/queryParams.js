@@ -44,6 +44,9 @@ exports.parseQueryParams = (params, metadata) => {
   edits.operations.afi = params.hasOwnProperty("afi")
     ? parseValue(params.afi, "string")
     : operations.afi;
+  edits.operations.sh = params.hasOwnProperty("sh")
+    ? parseValue(params.sh, "object")
+    : operations.sh;
 
   // ? Color Manipulation
   // TODO:
@@ -106,7 +109,10 @@ exports.parseQueryParams = (params, metadata) => {
  */
 const parseValue = (value, type, negative = true) => {
   let parsed;
-  if (type === "array" && typeof value !== "array") {
+  if (
+    (type === "array" && typeof value !== "array") ||
+    (type === "object" && typeof value !== "object")
+  ) {
     try {
       parsed = JSON.parse(value);
     } catch (err) {

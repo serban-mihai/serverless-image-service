@@ -167,6 +167,8 @@ Currently, the following query parameters are supported:
 - `af=<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#affine) | If a valid `Array` is passed will perform an **affine transform** on the image based on offset values inside the `Array`
 - `afbg=<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The **background in Hex** for the affine transform, defaults to full black `#000000`
 - `afi=<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The Interpolator for the affine transform, can be one of `nearest`, `bilinear`, `bicubic`, `locallyBoundedBicubic`, `nohalo`, `vertexSplitQuadraticBasisSpline`. It defaults to `bicubic`
+- `sh=<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#sharpen) | **Sharpen** the image, requires a valid JSON Object as value, more details about individual keys in the Docs
+  
 
 
 ###### Color Manipulation | [Docs](https://sharp.pixelplumbing.com/api-colour)
@@ -198,6 +200,7 @@ Since these parameters can be chained into one request, their actions need to co
 - `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]`: Will perform an affine transform over `image.jpg`
 - `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afbg=#FFFFFF`: Will perform an affine transform over `image.jpg` and convert the background to full white `#FFFFFF` 
 - `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afi=locallyBoundedBicubic`: Will perform an affine transform over `image.jpg` and apply an interpolator of `lbb` 
+- `/path/image.jpg?sh={"sigma":2,"m1":0,"m2":3,"x1":3,"y2":15,"y3":15}`: Will Sharpen `image.jpg` based on the parameters contained in the value Object 
    
 ###### Examples - Color Manipulation
 
@@ -363,6 +366,7 @@ What needs to be addressed soon:
 - [ ] Add support for [Image Operations](https://sharp.pixelplumbing.com/api-operation)
 - [ ] Add support for [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
 - [ ] Add support for [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
+- [ ] Allow `Base64` encoding for long and explicit param values (Arrays and Objects)
 - [ ] Create presets for popular transforms that can be applied all at once with a special query param and have priority over other query parameters
 - [ ] Extend `DELETE` endpoint to remove multiple assets at once, similar to `POST` but reversed.
 - [x] Personal favourite, add watermark with custom position, can be achieved with [Compositing](https://sharp.pixelplumbing.com/api-composite)

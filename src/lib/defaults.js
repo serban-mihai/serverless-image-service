@@ -10,6 +10,7 @@ exports.defaults = {
     af: undefined, // affine matrix
     afbg: "#000000", // affine background
     afi: "bicubic", // affine interpolator
+    sh: undefined // sharpen
   },
   color: {},
   channel: {},

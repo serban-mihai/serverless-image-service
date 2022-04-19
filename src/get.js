@@ -57,6 +57,7 @@ exports.handler = async (event, context) => {
         background: operations.afbg,
         interpolator: sharp.interpolators[operations.afi],
       });
+    if (operations.sh) sharpObject.sharpen(operations.sh);
 
     // ? Color Manipulation
     // TODO:
