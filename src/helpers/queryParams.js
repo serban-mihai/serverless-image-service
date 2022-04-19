@@ -11,36 +11,62 @@ const verboseErrors = getSetting("ALLOW_VERBOSE_ERRORS");
  */
 exports.parseQueryParams = (params, metadata) => {
   const { format, size, width, height, hasAlpha } = metadata;
+  const { resize, operations, color, channel, compositing, output } = defaults;
 
   // Parse query parameters to their type values (besides the s query param)
-  const edits = {};
+  const edits = defaults;
 
-  edits.w = params.hasOwnProperty("w")
+  // ? Resizing Operations
+  edits.resize.w = params.hasOwnProperty("w")
     ? parseValue(params.w, "number", verboseErrors)
-    : defaults.w;
-  edits.h = params.hasOwnProperty("h")
+    : resize.w;
+  edits.resize.h = params.hasOwnProperty("h")
     ? parseValue(params.h, "number", verboseErrors)
-    : defaults.h;
-  edits.fm =
+    : resize.h;
+
+  // ? Image Operations
+  // TODO:
+  edits.operations.r = params.hasOwnProperty("r")
+    ? parseValue(params.r, "number", verboseErrors)
+    : operations.r;
+  edits.operations.flip = params.hasOwnProperty("flip")
+    ? parseValue(params.flip, "boolean")
+    : operations.flip;
+  edits.operations.flop = params.hasOwnProperty("flop")
+    ? parseValue(params.flop, "boolean")
+    : operations.flop;
+
+  // ? Color Manipulation
+  // TODO:
+
+  // ? Channel Manipulation
+  // TODO:
+
+  // ? Compositing Images
+  edits.compositing.wm = params.hasOwnProperty("wm")
+    ? parseValue(params.wm, "string")
+    : compositing.wm;
+  edits.compositing.gr = params.hasOwnProperty("gr")
+    ? parseValue(params.gr, "string")
+    : compositing.gr;
+
+  // ? Output Options
+  edits.output.fm =
     params.hasOwnProperty("fm") && formats.includes(params.fm)
       ? parseValue(params.fm, "string")
       : format;
-  edits.wm = params.hasOwnProperty("wm")
-    ? parseValue(params.wm, "string")
-    : defaults.wm;
-  edits.gr = params.hasOwnProperty("gr")
-    ? parseValue(params.gr, "string")
-    : defaults.gr;
 
-  // Quality and some file specifics options for the image processing
-  const defaultQuality = getSetting("DEFAULT_QUALITY");
+  // TODO: Remove below
+  // const defaultQuality = getSetting("DEFAULT_QUALITY");
+
   const q = params.hasOwnProperty("q")
     ? parseValue(params.q, "number", verboseErrors)
-    : defaultQuality;
-  const lossless = params.hasOwnProperty("ll")
+    : output.q;
+  const ll = params.hasOwnProperty("ll")
     ? parseValue(params.ll, "boolean")
-    : defaults.ll;
+    : output.ll;
 
+  // Quality and some file specifics options for the image processing
   const options = {
     quality: q <= 70 ? q : defaults.q, // ? Default to 70 until size bug is fixed
     effort: 1, // ! Not available for some formats, need to check if it might break anything
@@ -53,7 +79,7 @@ exports.parseQueryParams = (params, metadata) => {
       break;
     case "webp":
     case "avif": // ? Returns Content-Type: image/heif
-      options["lossless"] = lossless;
+      options["lossless"] = ll;
       break;
     default:
       break;

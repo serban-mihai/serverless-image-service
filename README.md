@@ -15,7 +15,19 @@ The advantages of having your custom solution are flexibility, lower costs, and 
       - [GET - List Images](#get---list-images)
       - [GET - Get Image](#get---get-image)
         - [Supported Query Parameters](#supported-query-parameters)
+          - [Resizing Operations](#resizing-operations)
+          - [Image Operations](#image-operations)
+          - [Color Manipulation](#color-manipulation)
+          - [Channel Manipulation](#channel-manipulation)
+          - [Compositing Images](#compositing-images)
+          - [Output Options](#output-options)
         - [Use Cases Examples](#use-cases-examples)
+          - [Examples - Resizing Operations](#examples---resizing-operations)
+          - [Examples - Image Operations](#examples---image-operations)
+          - [Examples - Color Manipulation](#examples---color-manipulation)
+          - [Examples - Channel Manipulation](#examples---channel-manipulation)
+          - [Examples - Compositing Images](#examples---compositing-images)
+          - [Examples - Output Options](#examples---output-options)
       - [POST - Upload Images](#post---upload-images)
       - [DELETE - Remove Image](#delete---remove-image)
   - [Setup](#setup)
@@ -116,28 +128,6 @@ This endpoint has 2 purposes, based on receiving query parameters or not:
 - `Without query params`: It returns the original file from the key provided (path + filename)
 - `With query params`: Attempts to fetch the original file and processes it based on what options are supported before returning it.
 
-##### Supported Query Parameters
-Currently, the following query parameters are supported:
-- `w=Number`: A positive number of **px** that represents the new **width** which the image is requested to scale at
-- `h=Number`: A positive number of **px** that represents the new **height** which the image is requested to scale at 
-- `q=Number`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
-- `fm=String`: The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
-- `ll=Boolean`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.   
-- `wm=String` The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
-- `gr=String` The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
-
-Since these parameters can be chained into one request, their actions need to coexist in the final image. Some rules apply when for example you get both `w` and `h` in the same request, or when you have just one of them but also `q`
-> Order doesn't matter between Query Parameters
-
-##### Use Cases Examples
-- `/path/image.jpg?w=500`: Will scale down `image.jpg` **width** to **500px** if its original width is higher, if the original width is lower, will NOT scale up, it will skip resizing maintaining aspect-ratio. Height is downscaled progressively in proportion to the new width
-- `/path/image.jpg?h=500`: Same as above but this time comparisons and dimensions are related to `image.jpg` **heights**
-- `/path/image.jpg?w=500&h=100`: Unless the values provided are not complementary related to the originals, this will crop `image.jpg` to be **500px width** and **100px height**. If any of the values is bigger than its original counterpart resize is skipped and the original image is returned
-- `/path/image.jpg?q=57`: This will reduce the **quality** of `image.jpg` by **43%** before returning it. No scaling is applied
-- `/path/image.jpg?w=250&q=30`: For last, it will attempt to scale down `image.jpg` to **250px width** (with height proportionally scaled-down as well) and then reduce the quality of the scaled image by **70%**
-- `/path/image.jpg?w=100&fm=webp&ll=true`: Resizes `image.jpg` to **100px width** with proportional height and converts it to be in `webp` format, enabling **lossless** convertion.
-- `/path/image.jpg?wm=companyLogo.png&gr=southwest`: Applies the `companyLogo.png` watermark over `image.jpg` in `southwest` position aka. bottom-left. Pro-tip, leave some padding when designing the watermark, currently there is no offset option that works with `gravity`
-
 For some codec and config reasons, some formats that are applied `q=70` or higher, output a bigger size image than the original.
 > `GET` https://domain.com/random/path/image.jpg
 
@@ -163,6 +153,51 @@ For some codec and config reasons, some formats that are applied `q=70` or highe
     "message": "Error: Expected positive integer for height but received -350 of type number"
   }
   ```
+
+##### Supported Query Parameters
+Currently, the following query parameters are supported:
+###### [Resizing Operations](https://sharp.pixelplumbing.com/api-resize)
+- `w=Number`: A positive number of **px** that represents the new **width** which the image is requested to scale at
+- `h=Number`: A positive number of **px** that represents the new **height** which the image is requested to scale at
+ 
+###### [Image Operations](https://sharp.pixelplumbing.com/api-operation)
+
+###### [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
+
+###### [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
+
+###### [Compositing Images](https://sharp.pixelplumbing.com/api-composite)
+- `wm=String` The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
+- `gr=String` The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
+
+###### [Output Options](https://sharp.pixelplumbing.com/api-resize)
+- `q=Number`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
+- `fm=String`: The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
+- `ll=Boolean`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.
+
+Since these parameters can be chained into one request, their actions need to coexist in the final image. Some rules apply when for example you get both `w` and `h` in the same request, or when you have just one of them but also `q`
+> Order doesn't matter between Query Parameters
+
+##### Use Cases Examples
+###### Examples - Resizing Operations
+- `/path/image.jpg?w=500`: Will scale down `image.jpg` **width** to **500px** if its original width is higher, if the original width is lower, will NOT scale up, it will skip resizing maintaining aspect-ratio. Height is downscaled progressively in proportion to the new width
+- `/path/image.jpg?h=500`: Same as above but this time comparisons and dimensions are related to `image.jpg` **heights**
+- `/path/image.jpg?w=500&h=100`: Unless the values provided are not complementary related to the originals, this will crop `image.jpg` to be **500px width** and **100px height**. If any of the values is bigger than its original counterpart resize is skipped and the original image is returned
+
+###### Examples - Image Operations
+
+###### Examples - Color Manipulation
+
+###### Examples - Channel Manipulation
+
+###### Examples - Compositing Images
+- `/path/image.jpg?wm=companyLogo.png&gr=southwest`: Applies the `companyLogo.png` watermark over `image.jpg` in `southwest` position aka. bottom-left. Pro-tip, leave some padding when designing the watermark, currently there is no offset option that works with `gravity`
+
+###### Examples - Output Options
+- `/path/image.jpg?q=57`: This will reduce the **quality** of `image.jpg` by **43%** before returning it. No scaling is applied
+- `/path/image.jpg?w=250&q=30`: For last, it will attempt to scale down `image.jpg` to **250px width** (with height proportionally scaled-down as well) and then reduce the quality of the scaled image by **70%**
+- `/path/image.jpg?w=100&fm=webp&ll=true`: Resizes `image.jpg` to **100px width** with proportional height and converts it to be in `webp` format, enabling **lossless** convertion.
+
 #### POST - Upload Images
 Uploads one or many images to a specific path inside an **S3 Bucket**. Once provided `/path/to/upload` the function will attempt to upload all the files provided under it, if any of the selected filenames are already contained inside the same path, it will throw a conflict error.
 
@@ -308,9 +343,13 @@ Along with the edits to almost all the code structure, there are still a couple 
 
 ### TODO
 What needs to be addressed soon:
-- [ ] Support as many query params as possible mapped from [Sharp](https://sharp.pixelplumbing.com/api-operation) including the `fm=` parameter to return custom formats.
-- [ ] Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
+- [ ] Add support for remaining [Resizing Operations](https://sharp.pixelplumbing.com/api-resize)
+- [ ] Add support for [Image Operations](https://sharp.pixelplumbing.com/api-operation)
+- [ ] Add support for [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
+- [ ] Add support for [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
+- [ ] Extend `DELETE` endpoint to remove multiple assets at once, similar to `POST` but reversed.
 - [x] Personal favourite, add watermark with custom position, can be achieved with [Compositing](https://sharp.pixelplumbing.com/api-composite)
+- [ ] Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
 - [ ] Test the security `s=""` query parameter or change it with another solution
 - [ ] Review security and `binaryMediaTypes` from API Gateway to disallow certain file types to be uploaded/served
 - [ ] Test uploading other files besides images, restrict or let pass other MIME Types with a flag on Serverless

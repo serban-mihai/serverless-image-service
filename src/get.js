@@ -3,8 +3,6 @@ const { getSetting } = require("./helpers/settings");
 const { getOriginalImage, parseImageKey } = require("./helpers/bucket");
 const { parseQueryParams } = require("./helpers/queryParams");
 const sharp = require("sharp");
-const fs = require("fs");
-const { join } = require("path");
 
 exports.handler = async (event, context) => {
   const beforeHandle = beforeHandleRequest(event);
@@ -40,20 +38,36 @@ exports.handler = async (event, context) => {
       event.queryStringParameters,
       metadata
     );
-    const { w, h, fm, wm, gr } = edits;
+    const { resize, operations, color, channel, compositing, output } = edits;
 
+    // ? Resizing and Output
     // Applying resize, original metadata for rotation and converting to a custom format
-    await sharpObject
-      .resize(w, h, { withoutEnlargement: true })
+    sharpObject
+      .resize(resize.w, resize.h, { withoutEnlargement: true })
       .withMetadata()
-      .toFormat(fm, options);
+      .toFormat(output.fm, options);
 
+    // ? Image Operations
+    // TODO:
+    if (operations.r) sharpObject.rotate(operations.r);
+    if (operations.flip) sharpObject.flip();
+    if (operations.flop) sharpObject.flop();
+
+    // ? Color Manipulation
+    // TODO:
+
+    // ? Channel Manipulation
+    // TODO:
+
+    // ? Compositing
     // If the Watermark param is set, apply it over the image along with the gravity position
-    if (wm) {
-      await sharpObject.composite([
-        { input: `${__dirname}/assets/${wm}`, gravity: gr },
+    if (compositing.wm)
+      sharpObject.composite([
+        {
+          input: `${__dirname}/assets/${compositing.wm}`,
+          gravity: compositing.gr,
+        },
       ]);
-    }
 
     // Get the buffer and metadata from the processed image
     const { data, info } = await sharpObject.toBuffer({
