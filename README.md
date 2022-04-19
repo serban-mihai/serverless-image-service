@@ -157,23 +157,26 @@ For some codec and config reasons, some formats that are applied `q=70` or highe
 ##### Supported Query Parameters
 Currently, the following query parameters are supported:
 ###### [Resizing Operations](https://sharp.pixelplumbing.com/api-resize)
-- `w=Number`: A positive number of **px** that represents the new **width** which the image is requested to scale at
-- `h=Number`: A positive number of **px** that represents the new **height** which the image is requested to scale at
+- `w=<Number>`: A positive number of **px** that represents the new **width** which the image is requested to scale at
+- `h=<Number>`: A positive number of **px** that represents the new **height** which the image is requested to scale at
  
 ###### [Image Operations](https://sharp.pixelplumbing.com/api-operation)
+- `r=<Number>`: An integer number that represents the **rotation degree** at which the image will be rotated. Negative numbers allowed for counter-clockwise rotations.
+- `flip=<Boolean>`: If true will **mirror** the image on the **Y axis**
+- `flop=<Boolean>`: If true will **mirror** the image on the **X axis**
 
 ###### [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
 
 ###### [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
 
 ###### [Compositing Images](https://sharp.pixelplumbing.com/api-composite)
-- `wm=String` The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
-- `gr=String` The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
+- `wm=<String>` The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
+- `gr=<String>` The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
 
 ###### [Output Options](https://sharp.pixelplumbing.com/api-resize)
-- `q=Number`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
-- `fm=String`: The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
-- `ll=Boolean`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.
+- `q=<Number>`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
+- `fm=<String>`: The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
+- `ll=<Boolean>`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.
 
 Since these parameters can be chained into one request, their actions need to coexist in the final image. Some rules apply when for example you get both `w` and `h` in the same request, or when you have just one of them but also `q`
 > Order doesn't matter between Query Parameters
@@ -185,6 +188,9 @@ Since these parameters can be chained into one request, their actions need to co
 - `/path/image.jpg?w=500&h=100`: Unless the values provided are not complementary related to the originals, this will crop `image.jpg` to be **500px width** and **100px height**. If any of the values is bigger than its original counterpart resize is skipped and the original image is returned
 
 ###### Examples - Image Operations
+- `/path/image.jpg?r=33`: Will rotate `image.jpg` of **33 degrees clockwise**. Warning, the canvas containing the image will scale to new dimensions to include the whole image corners!
+- `/path/image.jpg?r=-75`: Will rotate `image.jpg` of **75 degrees counter-clockwise**. Same warning as above applies here as well
+- `/path/image.jpg?flip=true&flop=1`: Will mirror `image.jpg` on **both X and Y axis** (diagonal mirror). You can pass both `true` `false` and `0` `1` values. 
 
 ###### Examples - Color Manipulation
 
