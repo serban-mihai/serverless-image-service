@@ -102,27 +102,41 @@ exports.parseQueryParams = (params, metadata) => {
     : color.tc;
 
   // ? Channel Manipulation
-  // TODO:
+  edits.channel.ra = params.hasOwnProperty("ra") // Remove Alpha Channel
+    ? parseValue(params.ra, "boolean")
+    : channel.ra;
+  edits.channel.ea = params.hasOwnProperty("ea") // Ensure Alpha Channel
+    ? parseValue(params.ea, "float")
+    : channel.ea;
+  edits.channel.ec = params.hasOwnProperty("ec") // Extract Channel
+    ? parseValue(params.ec, "string")
+    : channel.ec;
+  edits.channel.jc = params.hasOwnProperty("jc") // Join Channels
+    ? parseValue(params.jc, "array")
+    : channel.jc;
+  edits.channel.bb = params.hasOwnProperty("bb") // BandBool
+    ? parseValue(params.bb, "string")
+    : channel.bb;
 
   // ? Compositing Images
-  edits.compositing.wm = params.hasOwnProperty("wm")
+  edits.compositing.wm = params.hasOwnProperty("wm") // Watermarn Name
     ? parseValue(params.wm, "string")
     : compositing.wm;
-  edits.compositing.gr = params.hasOwnProperty("gr")
+  edits.compositing.gr = params.hasOwnProperty("gr") // Gravity For Watermark
     ? parseValue(params.gr, "string")
     : compositing.gr;
 
   // ? Output Options
   edits.output.fm =
-    params.hasOwnProperty("fm") && formats.includes(params.fm)
+    params.hasOwnProperty("fm") && formats.includes(params.fm) // Format Output
       ? parseValue(params.fm, "string")
       : format;
 
   const defaultQuality = getSetting("DEFAULT_QUALITY");
-  const q = params.hasOwnProperty("q")
+  const q = params.hasOwnProperty("q") // Quality
     ? parseValue(params.q, "integer", verboseErrors)
     : output.q;
-  const ll = params.hasOwnProperty("ll")
+  const ll = params.hasOwnProperty("ll") // Lossless
     ? parseValue(params.ll, "boolean")
     : output.ll;
 

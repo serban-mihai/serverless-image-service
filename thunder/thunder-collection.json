@@ -88,7 +88,16 @@
         },
         { "name": "g", "value": "true", "isPath": false },
         { "name": "pc", "value": "rgb16", "isPath": false },
-        { "name": "tc", "value": "srgb", "isPath": false }
+        { "name": "tc", "value": "srgb", "isPath": false },
+        { "name": "ra", "value": "true", "isPath": false },
+        { "name": "ea", "value": "0.1", "isPath": false },
+        { "name": "ec", "value": "red", "isPath": false },
+        {
+          "name": "jc",
+          "value": "[\"https://images.unsplash.com/photo-1568193755668-aae18714a9f1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=350&q=80\",\"https://images.unsplash.com/photo-1558098329-a11cff621064?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=350&q=80\",\"https://images.unsplash.com/photo-1510915361894-db8b60106cb1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=350&q=80\"]",
+          "isPath": false
+        },
+        { "name": "bb", "value": "eor", "isPath": false }
       ],
       "tests": []
     },
