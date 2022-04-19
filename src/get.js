@@ -2,7 +2,7 @@ const { beforeHandleRequest } = require("./helpers/security");
 const { getSetting } = require("./helpers/settings");
 const { getOriginalImage, parseImageKey } = require("./helpers/bucket");
 const { parseQueryParams } = require("./helpers/queryParams");
-const { processedImage, processImage } = require("./helpers/pipeline");
+const { processImage } = require("./helpers/pipeline");
 const sharp = require("sharp");
 
 exports.handler = async (event, context) => {
@@ -41,7 +41,7 @@ exports.handler = async (event, context) => {
     );
 
     // Apply all edits detected over the Sharp object
-    await processImage(sharpObject, edits, options);
+    await processImage(sharpObject, edits, options, metadata);
 
     // Get the buffer and metadata from the processed image
     const { data, info } = await sharpObject.toBuffer({

@@ -189,6 +189,11 @@ Currently, the following query parameters are supported:
 - `tc=<String>`: [📝](https://sharp.pixelplumbing.com/api-colour#tocolourspace) | Set the **output colourspace**. Possible values same as above
 
 ###### Channel Manipulation | [Docs](https://sharp.pixelplumbing.com/api-channel)
+- `ra=<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-channel#removealpha) | if value is `true` then **Remove Alpha** channel from `image.jpg` if any
+- `ea=<Float>`: [📝](https://sharp.pixelplumbing.com/api-channel#ensurealpha) | **Ensure Alpha** channel on `image.jpg` by the number in the value
+- `ec=<String>`: [📝](https://sharp.pixelplumbing.com/api-channel#extractchannel) | **Extract a Single Channel** from `image.jpg`. Possible values are `red`, `green`, `blue` and `alpha` 
+- `jc=<Array>`: [📝](https://sharp.pixelplumbing.com/api-channel#joinchannel) | **Join more channels** into `image.jpg`. Value is an array of links to images with different channels to be fetched and then merged. Warning, is error prone, use carefully.
+- `bb=<String>`: [📝](https://sharp.pixelplumbing.com/api-channel#bandbool) | Perform a **Bitwise Boolean** operation on all input image channels (bands) to produce a single channel output image. Possible values are `and`, `or` and `eor`
 
 ###### Compositing Images | [Docs](https://sharp.pixelplumbing.com/api-composite)
 - `wm=<String>` [📝](https://sharp.pixelplumbing.com/api-composite#composite) | The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
@@ -213,7 +218,7 @@ Since these parameters can be chained into one request, their actions need to co
 - `/path/image.jpg?r=-75`: Will rotate `image.jpg` of **75 degrees counter-clockwise**. Same warning as above applies here as well
 - `/path/image.jpg?flip=true&flop=1`: Will mirror `image.jpg` on **both X and Y axis** (diagonal mirror). You can pass both `true` `false` and `0` `1` values 
 - `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]`: Will perform an **affine transform** over `image.jpg`
-- `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afbg=#FFFFFF`: Will perform an affine transform over `image.jpg` and convert the background to full white `#FFFFFF` 
+- `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afbg=#FFFFFF`: Will perform an affine transform over `image.jpg` and convert the background to full white `#FFFFFF`
 - `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afi=locallyBoundedBicubic`: Will perform an affine transform over `image.jpg` and apply an interpolator of `lbb` 
 - `/path/image.jpg?sh={"sigma":2,"m1":0,"m2":3,"x1":3,"y2":15,"y3":15}`: Will **Sharpen** `image.jpg` based on the parameters contained in the value Object
 - `/path/image.jpg?md=10`: Apply **Median** filter over `image.jpg`
@@ -237,6 +242,11 @@ Since these parameters can be chained into one request, their actions need to co
 - `/path/image.jpg?tc=srgb`: Sets the **output** `image.jpg` to `srgb` **Colour Space**
 
 ###### Examples - Channel Manipulation
+- `/path/image.jpg?ra=true`: **Removes** the Alpha Channel of `image.jpg` if there is any.
+- `/path/image.jpg?ea=0.1`: **Ensures** `image.jpg` has an alpha channel of the value `0.1`
+- `/path/image.jpg?ec=red`: **Extracts** from `image.jpg` the `red` channel
+- `/path/image.jpg?jc=["https://random.domain.com/path/firstImage.jpg","https://random.domain.com/path/secondImage.jpg","https://random.domain.com/path/thirdImage.jpg"]`: Fetches images in values' urls and **Joins Channels** of each with `image.jpg`
+- `/path/image.jpg?bb=eor`: **Bitwises** the channels of `image.jpg` based on `eor` logical to return a single channel
 
 ###### Examples - Compositing Images
 - `/path/image.jpg?wm=companyLogo.png&gr=southwest`: Applies the `companyLogo.png` watermark over `image.jpg` in `southwest` position aka. bottom-left. Pro-tip, leave some padding when designing the watermark, currently there is no offset option that works with `gravity`
@@ -398,7 +408,7 @@ What needs to be addressed soon:
 - [ ] Add support for remaining [Resizing Operations](https://sharp.pixelplumbing.com/api-resize)
 - [x] Add support for [Image Operations](https://sharp.pixelplumbing.com/api-operation)
 - [x] Add support for [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
-- [ ] Add support for [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
+- [x] Add support for [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
 - [ ] Add Images under each option in the Docs
 - [ ] Allow `Base64` encoding for long and explicit param values (Arrays and Objects)
 - [ ] Create presets for popular transforms that can be applied all at once with a special query param and have priority over other query parameters

@@ -31,7 +31,13 @@ exports.defaults = {
     pc: undefined, // pipeline colour space
     tc: undefined, // to colour space
   },
-  channel: {},
+  channel: {
+    ra: undefined, // remove alpha channel
+    ea: undefined, // ensure alpha
+    ec: undefined, // extract channel
+    jc: undefined, // join channels
+    bb: undefined, // bandbool
+  },
   compositing: {
     wm: undefined, // watermark
     gr: "southeast", // gravity

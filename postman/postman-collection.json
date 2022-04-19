@@ -184,6 +184,31 @@
               "key": "tc",
               "value": "srgb",
               "description": "Set the output colourspace"
+            },
+            {
+              "key": "ra",
+              "value": "true",
+              "description": "Remove alpha channel"
+            },
+            {
+              "key": "ea",
+              "value": "0.1",
+              "description": "Ensure the output image has an alpha transparency channel"
+            },
+            {
+              "key": "ec",
+              "value": "red",
+              "description": "Extract a single channel from a multi-channel image"
+            },
+            {
+              "key": "jc",
+              "value": "[\"https://images.unsplash.com/photo-1568193755668-aae18714a9f1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=350&q=80\",\"https://images.unsplash.com/photo-1558098329-a11cff621064?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=350&q=80\",\"https://images.unsplash.com/photo-1510915361894-db8b60106cb1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=350&q=80\"]",
+              "description": "Join one or more channels to the image"
+            },
+            {
+              "key": "bb",
+              "value": "eor",
+              "description": "Perform a bitwise boolean operation to produce a single channel output image"
             }
           ]
         }

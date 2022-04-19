@@ -3,12 +3,13 @@ const { getBooleanImage } = require("./queryParams");
 /**
  * Chains together the edits over the image requested, applying eveything that
  * matches to the requested query parameters detected
- * @param {Sharp} sharpObject - The Sharp object from the original image
+ * @param {Sharp} sharpObject - The Sharp object from the original image on which o apply edits
  * @param {Object} edits - The matched query parameters and their values
  * @param {Object} options - Additional parameters for quality and format
- * @return - Returns void, it applied all image manipulations on the object
+ * @param {Object} metadata - Metadata from the original image for comparison to some options
+ * @return Returns void after applying all image manipulations on the Sharp object
  */
-exports.processImage = async (sharpObject, edits, options) => {
+exports.processImage = async (sharpObject, edits, options, metadata) => {
   const { resize, operations, color, channel, compositing, output } = edits;
 
   // Applying resize, original metadata for rotation and converting to a custom format
@@ -56,7 +57,18 @@ exports.processImage = async (sharpObject, edits, options) => {
   if (color.tc) sharpObject.toColourspace(color.tc);
 
   // ? Channel Manipulation
-  // TODO:
+  if (channel.ra && metadata.hasAlpha) sharpObject.removeAlpha();
+  if (channel.ea && !metadata.hasAlpha) sharpObject.ensureAlpha(channel.ea);
+  if (channel.ec) sharpObject.extractChannel(channel.ec);
+  if (channel.jc) {
+    let toJoin = [];
+    for (const image of channel.jc) {
+      const temp = await getBooleanImage(image);
+      toJoin.push(temp);
+    }
+    sharpObject.joinChannel(toJoin);
+  }
+  if (channel.bb) sharpObject.bandbool(channel.bb);
 
   // ? Compositing
   // If the Watermark param is set, apply it over the image along with the gravity position

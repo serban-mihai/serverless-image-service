@@ -161,6 +161,7 @@ functions:
         - "src/errors/**"
         - "src/helpers/**"
         - "!src/helpers/queryParams.js"
+        - "!src/helpers/pipeline.js"
         - "src/post.js"
     handler: "src/post.handler"
     layers:
