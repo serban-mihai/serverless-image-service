@@ -397,7 +397,7 @@ Along with the edits to almost all the code structure, there are still a couple 
 What needs to be addressed soon:
 - [ ] Add support for remaining [Resizing Operations](https://sharp.pixelplumbing.com/api-resize)
 - [x] Add support for [Image Operations](https://sharp.pixelplumbing.com/api-operation)
-- [ ] Add support for [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
+- [x] Add support for [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
 - [ ] Add support for [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
 - [ ] Add Images under each option in the Docs
 - [ ] Allow `Base64` encoding for long and explicit param values (Arrays and Objects)
