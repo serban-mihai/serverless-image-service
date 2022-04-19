@@ -36,7 +36,7 @@ exports.processImage = async (sharpObject, edits, options) => {
       ? sharpObject.gamma(operations.gm[0])
       : sharpObject.gamma(operations.gm[0], operations.gm[1]);
   if (operations.ng) sharpObject.negate({ alpha: operations.ng });
-  if (operations.nr) sharpObject.normalize(operations.nr);
+  if (operations.nr) sharpObject.normalize();
   if (operations.cl) sharpObject.clahe(operations.cl);
   if (operations.cv) sharpObject.convolve(operations.cv);
   if (operations.th) sharpObject.threshold(operations.th);
@@ -50,7 +50,10 @@ exports.processImage = async (sharpObject, edits, options) => {
   if (operations.mo) sharpObject.modulate(operations.mo);
 
   // ? Color Manipulation
-  // TODO:
+  if (color.t) sharpObject.tint(color.t);
+  if (color.g) sharpObject.greyscale();
+  if (color.pc) sharpObject.pipelineColourspace(color.pc);
+  if (color.tc) sharpObject.toColourspace(color.tc);
 
   // ? Channel Manipulation
   // TODO:

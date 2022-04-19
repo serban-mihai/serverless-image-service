@@ -88,7 +88,18 @@ exports.parseQueryParams = (params, metadata) => {
     : operations.mo;
 
   // ? Color Manipulation
-  // TODO:
+  edits.color.t = params.hasOwnProperty("t") // Tint
+    ? parseValue(params.t, "object")
+    : color.t;
+  edits.color.g = params.hasOwnProperty("g") // Grayscale
+    ? parseValue(params.g, "boolean")
+    : color.g;
+  edits.color.pc = params.hasOwnProperty("pc") // Pipeline Colour Space
+    ? parseValue(params.pc, "string")
+    : color.pc;
+  edits.color.tc = params.hasOwnProperty("tc") // To Colour Space
+    ? parseValue(params.tc, "string")
+    : color.tc;
 
   // ? Channel Manipulation
   // TODO:
