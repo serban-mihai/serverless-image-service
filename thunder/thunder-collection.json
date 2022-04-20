@@ -154,13 +154,18 @@
       "colId": "841c4446-8616-4707-b823-fda1cba8d625",
       "containerId": "",
       "name": "Remove Image",
-      "url": "{{protocol}}://{{domain}}/{{path}}/{{filename}}",
+      "url": "{{protocol}}://{{domain}}/{{path}}",
       "method": "DELETE",
       "sortNum": 25000,
       "created": "2022-04-15T10:08:21.093Z",
       "modified": "2022-04-15T10:31:30.223Z",
       "headers": [],
       "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n\"images\": [\"first.jpg\",\"second.jpg\", \"thisDoesntExist.jpg\"]\n}",
+        "form": []
+      },
       "tests": []
     },
     {
