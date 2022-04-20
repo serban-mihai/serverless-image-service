@@ -2,6 +2,14 @@ exports.defaults = {
   resize: {
     w: undefined, // width
     h: undefined, // height
+    f: undefined, // fit
+    p: undefined, // position
+    bg: undefined, // background
+    k: undefined, // kernel
+    ex: undefined, // extend
+    cb: undefined, // extract/crop before
+    ca: undefined, // extract/crop after
+    tr: undefined, // trim
   },
   operations: {
     r: undefined, // rotation

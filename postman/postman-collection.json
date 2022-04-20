@@ -46,6 +46,46 @@
               "description": "Image's new quality"
             },
             {
+              "key": "f",
+              "value": "contain",
+              "description": "Fit for resized images"
+            },
+            {
+              "key": "p",
+              "value": "west",
+              "description": "Position for cover and contain fit"
+            },
+            {
+              "key": "bg",
+              "value": "{\"r\":0,\"g\":0,\"b\":100,\"alpha\":0.3}",
+              "description": "Background color when using fit = contain"
+            },
+            {
+              "key": "k",
+              "value": "nearest",
+              "description": "Kernel for image reduction"
+            },
+            {
+              "key": "ex",
+              "value": "{\"top\":10,\"bottom\":20,\"left\":50,\"right\":10}",
+              "description": "Extend the image with the background color"
+            },
+            {
+              "key": "cb",
+              "value": "{\"left\":0,\"top\":0,\"width\":300,\"height\":50}",
+              "description": "Extract/Crop before resizing"
+            },
+            {
+              "key": "ca",
+              "value": "{\"left\":0,\"top\":0,\"width\":300,\"height\":50}",
+              "description": "Extract/Crop after resizing"
+            },
+            {
+              "key": "tr",
+              "value": "10",
+              "description": "Trim boring pixels on edges"
+            },
+            {
               "key": "fm",
               "value": "webm",
               "description": "Image's new format"

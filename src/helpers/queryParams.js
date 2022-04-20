@@ -7,23 +7,46 @@ const https = require("https");
 /**
  * Parse the query parameters from a request and return their edits values after sanitize
  * @param {Object} params - The query parameters object from the request
- * @param {Object} metadata - Metadata from the original image
+ * @param {Object} originalFormat - The original image's format
  * @return {Object} - An object with final valid edits and options to be applied to the image requested
  */
-exports.parseQueryParams = (params, metadata) => {
-  const { format, size, width, height, hasAlpha } = metadata;
+exports.parseQueryParams = (params, originalFormat) => {
   const { resize, operations, color, channel, compositing, output } = defaults;
 
   // Parse query parameters to their type values (besides the s query param)
   const edits = defaults;
 
   // ? Resizing Operations
-  edits.resize.w = params.hasOwnProperty("w")
+  edits.resize.w = params.hasOwnProperty("w") // Width
     ? parseValue(params.w, "integer", verboseErrors)
     : resize.w;
-  edits.resize.h = params.hasOwnProperty("h")
+  edits.resize.h = params.hasOwnProperty("h") // Height
     ? parseValue(params.h, "integer", verboseErrors)
     : resize.h;
+  edits.resize.f = params.hasOwnProperty("f") // Fit
+    ? parseValue(params.f, "string")
+    : resize.f;
+  edits.resize.p = params.hasOwnProperty("p") // Position
+    ? parseValue(params.p, "string")
+    : resize.p;
+  edits.resize.bg = params.hasOwnProperty("bg") // Background
+    ? parseValue(params.bg, "object")
+    : resize.bg;
+  edits.resize.k = params.hasOwnProperty("k") // Kernel
+    ? parseValue(params.k, "string")
+    : resize.k;
+  edits.resize.ex = params.hasOwnProperty("ex") // Extend
+    ? parseValue(params.ex, "object")
+    : resize.ex;
+  edits.resize.cb = params.hasOwnProperty("cb") // Extract/Crop Before
+    ? parseValue(params.cb, "object")
+    : resize.cb;
+  edits.resize.ca = params.hasOwnProperty("ca") // Extract/Crop After
+    ? parseValue(params.ca, "object")
+    : resize.ca;
+  edits.resize.tr = params.hasOwnProperty("tr") // Trim
+    ? parseValue(params.tr, "integer")
+    : resize.tr;
 
   // ? Image Operations
   edits.operations.r = params.hasOwnProperty("r") // Rotation
@@ -130,7 +153,7 @@ exports.parseQueryParams = (params, metadata) => {
   edits.output.fm =
     params.hasOwnProperty("fm") && formats.includes(params.fm) // Format Output
       ? parseValue(params.fm, "string")
-      : format;
+      : originalFormat;
 
   const defaultQuality = getSetting("DEFAULT_QUALITY");
   const q = params.hasOwnProperty("q") // Quality
@@ -140,7 +163,7 @@ exports.parseQueryParams = (params, metadata) => {
     ? parseValue(params.ll, "boolean")
     : output.ll;
 
-  // Quality and some file specifics options for the image processing
+  // Quality and some file specifics output options for the image processing
   const options = {
     quality: q <= 70 ? q : output.q, // ? Default to 70 until size bug is fixed
     effort: 1, // ! Not available for some formats, need to check if it might break anything
@@ -221,7 +244,7 @@ const parseValue = (value, type, negative = true) => {
  * @param {String} url - The URL from where the image to be fetched
  * @return {Buffer} - The binary Buffer of the image to be applied operand to Boolean
  */
-exports.getBooleanImage = (url) => {
+exports.getImage = (url) => {
   return new Promise((resolve, reject) => {
     const req = https.get(url, (res) => {
       const body = [];
