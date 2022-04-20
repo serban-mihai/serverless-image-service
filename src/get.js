@@ -37,7 +37,7 @@ exports.handler = async (event, context) => {
     // Filter, sanitize and parse incoming query params
     const { edits, options } = parseQueryParams(
       event.queryStringParameters,
-      metadata
+      metadata.format
     );
 
     // Apply all edits detected over the Sharp object

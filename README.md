@@ -159,14 +159,22 @@ Currently, the following query parameters are supported:
 ###### Resizing Operations | [Docs](https://sharp.pixelplumbing.com/api-resize)
 - `w=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **width** which the image is requested to scale at
 - `h=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **height** which the image is requested to scale at
- 
+- `f=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-resize#parameters) | The **fit** for when both **width and height** are used, can be `cover`, `contain`, `fill`, `inside` or `outside`. Defaults to `cover` 
+- `p=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-resize#parameters) | The **position** for when **fit** is either `cover` or `contain`. Can be `top`, `right bottom`, `left top`... or cardinal `north`, `southeast`, `west`,...  Defaults to `center`, full list of available values in Docs.
+- `bg=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-resize#parameters) | The **ackground colour** when using a `fit` of `contain`
+- `k=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-resize#parameters) | The **kernel** to use for image reduction. It can be `nearest`, `cubic`, `mitchell`, `lanczos2`, `lanczos3` (default) 
+- `ex=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-resize#extend) | **Extends** the edges of the image with the provided background colour.
+- `cb=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-resize#extract) | **Extract/crop** a region of the image **before** resizing
+- `ca=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-resize#extract) | **Extract/crop** a region of the image **after** resizing
+- `tr=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#trim) | **Trim** "boring" pixels from all edges that contain values similar to the top-left pixel
+
 ###### Image Operations | [Docs](https://sharp.pixelplumbing.com/api-operation)
 - `r=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#rotate) | An integer number that represents the **rotation degree** at which the image will be rotated. Negative numbers allowed for counter-clockwise rotations.
 - `flip=` | `<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flip) | If true will **mirror** the image on the **Y axis**
 - `flop=` | `<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flop) | If true will **mirror** the image on the **X axis**
 - `af=` | `<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#affine) | If a valid `Array` is passed will perform an **affine transform** on the image based on offset values inside the `Array`
 - `afbg=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The **background in Hex** for the affine transform, defaults to full black `#000000`
-- `afi=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The Interpolator for the affine transform, can be one of `nearest`, `bilinear`, `bicubic`, `locallyBoundedBicubic`, `nohalo`, `vertexSplitQuadraticBasisSpline`. It defaults to `bicubic`
+- `afi=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-operation#parameters-4) | The Interpolator for the affine transform, can be one of `nearest`, `bilinear`, `bicubic`, `lbb`, `nohalo`, `vsqbs`. It defaults to `bicubic`
 - `sh=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#sharpen) | **Sharpen** the image, requires a valid JSON Object as value, more details about individual keys in the Docs
 - `md=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#median) | Apply a **Median filter** over the image. Value is an `integer`, represents the square mask NxN 
 - `bl=` | `<Float>`: [📝](https://sharp.pixelplumbing.com/api-operation#blur) | **Blur** the image by the value, which represents the **sigma** of the Gaussian mask. Values accepted in the range 0.3 and 1000, `float` or `integer` types.
@@ -212,6 +220,14 @@ Since these parameters can be chained into one request, their actions need to co
 - `/path/image.jpg?w=500`: Will scale down `image.jpg` **width** to **500px** if its original width is higher, if the original width is lower, will NOT scale up, it will skip resizing maintaining aspect-ratio. Height is downscaled progressively in proportion to the new width
 - `/path/image.jpg?h=500`: Same as above but this time comparisons and dimensions are related to `image.jpg` **heights**
 - `/path/image.jpg?w=500&h=100`: Unless the values provided are not complementary related to the originals, this will crop `image.jpg` to be **500px width** and **100px height**. If any of the values is bigger than its original counterpart resize is skipped and the original image is returned
+- `/path/image.jpg?w=500&h=100&f=contain`: Will resize the `image.jpg` **canvas to 500x100** and scale down the image mantaining proportions leaving a **black background**
+- `/path/image.jpg?w=500&h=100&f=contain&p=west`: Same as above but will **align** `image.jpg` on the left of the canvas
+- `/path/image.jpg?w=500&h=100&f=contain&p=west&bg={"r":0,"g":0,"b":100,"alpha":0.3}`: Same as above but the black background will match the `rgba` color in the params
+- `/path/image.jpg?w=500&h=100&k=nearest`: Using `nearest` **kernel** to process `image.jpg`
+- `/path/image.jpg?ex={"top":10,"bottom":20,"left":50,"right":10}`: Extends the image with as many px as described in each position in params. Can be chained with `bg` to give to the background a different color
+- `/path/image.jpg?cb={"left":0,"top":0,"width":300,"height":50}`: **Crops before** resizing `image.jpg`  
+- `/path/image.jpg?ca={"left":0,"top":0,"width":300,"height":50}`: **Crops after** resizing `image.jpg`
+- `/path/image.jpg?tr=10`: **Trims** the similar value **10 pixels** around the edges of `image.jpg` 
 
 ###### Examples - Image Operations
 - `/path/image.jpg?r=33`: Will rotate `image.jpg` of **33 degrees clockwise**. Warning, the canvas containing the image will scale to new dimensions to include the whole image corners!
@@ -219,7 +235,7 @@ Since these parameters can be chained into one request, their actions need to co
 - `/path/image.jpg?flip=true&flop=1`: Will mirror `image.jpg` on **both X and Y axis** (diagonal mirror). You can pass both `true` `false` and `0` `1` values 
 - `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]`: Will perform an **affine transform** over `image.jpg`
 - `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afbg=#FFFFFF`: Will perform an affine transform over `image.jpg` and convert the background to full white `#FFFFFF`
-- `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afi=locallyBoundedBicubic`: Will perform an affine transform over `image.jpg` and apply an interpolator of `lbb` 
+- `/path/image.jpg?af=[[1,0.3],[0.1,0.7]]&afi=lbb`: Will perform an affine transform over `image.jpg` and apply an interpolator of `locallyBoundedBicubic` 
 - `/path/image.jpg?sh={"sigma":2,"m1":0,"m2":3,"x1":3,"y2":15,"y3":15}`: Will **Sharpen** `image.jpg` based on the parameters contained in the value Object
 - `/path/image.jpg?md=10`: Apply **Median** filter over `image.jpg`
 - `/path/image.jpg?bl=2.2`: **Blur** `image.jpg` with a sigma of `2.2` 
