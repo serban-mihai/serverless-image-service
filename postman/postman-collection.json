@@ -297,8 +297,17 @@
       "request": {
         "method": "DELETE",
         "header": [],
+        "body": {
+					"mode": "raw",
+					"raw": "{\n\"images\": [\"first.jpg\",\"second.jpg\", \"thisDoesntExist.jpg\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
         "url": {
-          "raw": "{{protocol}}://{{domain}}/{{path}}/{{filename}}",
+          "raw": "{{protocol}}://{{domain}}/{{path}}",
           "protocol": "{{protocol}}",
           "host": ["{{domain}}"],
           "path": ["{{path}}", "{{filename}}"]

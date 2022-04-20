@@ -74,7 +74,7 @@ More about this in my [article](https://serbanmihai.com/quests/serverless-image-
 | `GET`    | `/`       | [List Images](#get---list-images)      | `not-required`                          | `application/json`              | `none`          | `none`    | `image-service-<stage>-list`   |
 | `GET`    | `/{any+}` | [Get Image](#get---get-image)          | `not-required`                          | `image/*` or `application/json` | `none`          | `2592000` | `image-service-<stage>-get`    |
 | `POST`   | `/{any+}` | [Upload Images](#post---upload-images) | `multipart/form-data` or `not-required` | `application/json`              | `CUSTOM_DOMAIN` | `none`    | `image-service-<stage>-post`   |
-| `DELETE` | `/{any+}` | [Remove Image](#delete---remove-image) | `not-required`                          | `application/json`              | `CUSTOM_DOMAIN` | `none`    | `image-service-<stage>-delete` |
+| `DELETE` | `/{any+}` | [Remove Image](#delete---remove-image) | `not-required` or `application/json`    | `application/json`              | `CUSTOM_DOMAIN` | `none`    | `image-service-<stage>-delete` |
 
 #### GET - List Images
 Gets a list of all the images in the **S3 Bucket** (currently limited to 1000 keys). It has been designed for **debugging purposes only**, but can be extended to list subpaths as well as being so integrated into CMS workflows.
@@ -289,17 +289,17 @@ Following are some examples of `Query Parameter` usage:
 | Query                                                                                                                                                                                                                                                                           | Processed Image                                                                           |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `/path/image.jpg?wm=companyLogo.png&gr=southwest`<br>Applies the `companyLogo.png` watermark over `image.jpg` in `southwest` position aka. bottom-left. Pro-tip, leave some padding when designing the watermark, currently there is no offset option that works with `gravity` | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/compositing/wmgr1.jpg) |
-| `/path/image.jpg?wm=companyLogo.png&gr=northeast`<br>Applies the `companyLogo.png` watermark over `image.jpg` in `northeast` position aka. top-right. Pro-tip, leave some padding when designing the watermark, currently there is no offset option that works with `gravity` | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/compositing/wmgr2.jpg) |
-| `/path/image.jpg?wm=companyLogo.png&gr=center`<br>Applies the `companyLogo.png` watermark over `image.jpg` in `center` position aka. well, center. Pro-tip, leave some padding when designing the watermark, currently there is no offset option that works with `gravity`       | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/compositing/wmgr3.jpg) |
+| `/path/image.jpg?wm=companyLogo.png&gr=northeast`<br>Applies the `companyLogo.png` watermark over `image.jpg` in `northeast` position aka. top-right. Pro-tip, leave some padding when designing the watermark, currently there is no offset option that works with `gravity`   | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/compositing/wmgr2.jpg) |
+| `/path/image.jpg?wm=companyLogo.png&gr=center`<br>Applies the `companyLogo.png` watermark over `image.jpg` in `center` position aka. well, center. Pro-tip, leave some padding when designing the watermark, currently there is no offset option that works with `gravity`      | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/compositing/wmgr3.jpg) |
 
 ###### Examples - Output Options
 
-| Query                                                                                                                                                                                                              | Processed Image                                                                    |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| `/path/image.jpg?q=50`<br>This will reduce the **quality** of `image.jpg` by **50%** before returning it. No scaling is applied                                                                                    | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/output/qfirst.jpg) |
+| Query                                                                                                                                                                                                              | Processed Image                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `/path/image.jpg?q=50`<br>This will reduce the **quality** of `image.jpg` by **50%** before returning it. No scaling is applied                                                                                    | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/output/qfirst.jpg)  |
 | `/path/image.jpg?q=10`<br>This will reduce the **quality** of `image.jpg` by **90%** before returning it. No scaling is applied                                                                                    | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/output/qsecond.jpg) |
-| `/path/image.jpg?w=250&q=30`<br>For last, it will attempt to scale down `image.jpg` to **250px width** (with height proportionally scaled-down as well) and then reduce the quality of the scaled image by **70%** | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/output/qthird.jpg) |
-| `/path/image.jpg?w=100&fm=webp&ll=false`<br>Resizes `image.jpg` to **100px width** with proportional height and converts it to be in `webp` format, disable **lossless** convertion.                               | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/output/fm.webp) |
+| `/path/image.jpg?w=250&q=30`<br>For last, it will attempt to scale down `image.jpg` to **250px width** (with height proportionally scaled-down as well) and then reduce the quality of the scaled image by **70%** | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/output/qthird.jpg)  |
+| `/path/image.jpg?w=100&fm=webp&ll=false`<br>Resizes `image.jpg` to **100px width** with proportional height and converts it to be in `webp` format, disable **lossless** convertion.                               | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/output/fm.webp)     |
 
 #### POST - Upload Images
 Uploads one or many images to a specific path inside an **S3 Bucket**. Once provided `/path/to/upload` the function will attempt to upload all the files provided under it, if any of the selected filenames are already contained inside the same path, it will throw a conflict error.
@@ -371,8 +371,17 @@ Once the data gets parsed, it's directly written on the **S3 Bucket** from the *
   ```
 
 #### DELETE - Remove Image
-Removes the image that corresponds to the key (path + filename) provided with the request. It can delete just one file per call, if the key isn't available will throw an error, if the file has been deleted will return a successful message.
-> `DELETE` https://domain.com/random/path/image.jpg
+Removes images that correspond to the key (path + filename) provided with the request. The payload is an `application/json` that has the `images` key a list of string filenames to be removed within the path you invoked the function over. It can delete as many files as you pass to it. they just have to all be already stored within S3, if any of keys aren't available will throw an error, if all files have been deleted will return a successful message.
+
+> Payload:
+
+```
+{
+  "images": ["first.jpg","second.jpg", "thisDoesntExist.jpg"]
+}
+```
+
+> `DELETE` https://domain.com/random/path
 
 **It responds with:**
 - 🟢 Success: 
@@ -380,7 +389,7 @@ Removes the image that corresponds to the key (path + filename) provided with th
   {
     status: 200,
     code: "success",
-    message: "Image removed successfully!",
+    message: "Images removed successfully!",
   }
   ```
 - 🔴 Error:
@@ -388,7 +397,12 @@ Removes the image that corresponds to the key (path + filename) provided with th
   {
     "status": 404,
     "code": "not-found",
-    "message": "No image exists under the requested path"
+    "message": "No image passed for removal"
+  }
+  {
+    "status": 404,
+    "code": "not-found",
+    "message": "Images [ first.jpg, second.jpg ] don't exist under the requested path /random/path"
   }
   ```
 ## Setup
@@ -454,11 +468,11 @@ What needs to be addressed soon:
 - [x] Add support for [Image Operations](https://sharp.pixelplumbing.com/api-operation)
 - [x] Add support for [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
 - [x] Add support for [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
+- [x] Personal favourite, add watermark with custom position, can be achieved with [Compositing](https://sharp.pixelplumbing.com/api-composite)
 - [x] Add Images under each option in the Docs
+- [x] Extend `DELETE` endpoint to remove multiple assets at once, similar to `POST` but reversed.
 - [ ] Allow `Base64` encoding for long and explicit param values (Arrays and Objects)
 - [ ] Create presets for popular transforms that can be applied all at once with a special query param and have priority over other query parameters
-- [ ] Extend `DELETE` endpoint to remove multiple assets at once, similar to `POST` but reversed.
-- [x] Personal favourite, add watermark with custom position, can be achieved with [Compositing](https://sharp.pixelplumbing.com/api-composite)
 - [ ] Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
 - [ ] Test the security `s=""` query parameter or change it with another solution
 - [ ] Review security and `binaryMediaTypes` from API Gateway to disallow certain file types to be uploaded/served
