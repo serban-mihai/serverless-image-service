@@ -221,14 +221,36 @@ Following are some examples of `Query Parameter` usage:
 <details>
   <summary>Original</summary>
   
-  <img src="https://images.unsplash.com/photo-1644844616430-c0756c5b17a1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2148&q=80" width="700px">
+  <img src="https://cdn.serbanmihai.com/serverless-image-service/repo/original.jpg">
 </details>
+
 ###### Examples - Resizing Operations
-- `/path/image.jpg?w=300`: Will scale down `image.jpg` **width** to **300px** if its original width is higher, if the original width is lower, will NOT scale up, it will skip resizing maintaining aspect-ratio. Height is downscaled progressively in proportion to the new width
-  <details>
-    <summary>Result</summary>
-    <img src="https://images.unsplash.com/photo-1644844616430-c0756c5b17a1?ixlib=rb-1.2.1&  ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2148&q=80" width="300px">
-  </details>
+
+| Query  | Processed Image |
+| ------------- | ------------- |
+| `/path/image.jpg?w=300`<br>Will scale down `image.jpg` **width** to **300px** if its original width is higher, if the original width is lower, will NOT scale up, it will skip resizing maintaining aspect-ratio. Height is downscaled progressively in proportion to the new width  | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/w.jpg) |
+| `/path/image.jpg?h=300`: Same as above but this time comparisons and dimensions are related to `image.jpg` **heights**  | Content Cell  |
+| --------- | ![image]() |
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+| --------- | ![image]() | 
+
+
+- `/path/image.jpg?w=300`: Will scale down `image.jpg` **width** to **300px** if its original width is higher, if the original width is lower, will NOT scale up, it will skip resizing maintaining aspect-ratio. Height is downscaled progressively in proportion to the new width 
 - `/path/image.jpg?h=300`: Same as above but this time comparisons and dimensions are related to `image.jpg` **heights**
 - `/path/image.jpg?w=300&h=100`: Unless the values provided are not complementary related to the originals, this will crop `image.jpg` to be **300px width** and **100px height**. If any of the values is bigger than its original counterpart resize is skipped and the original image is returned
 - `/path/image.jpg?w=300&h=100&f=contain`: Will resize the `image.jpg` **canvas to 300x100** and scale down the image mantaining proportions leaving a **black background**
