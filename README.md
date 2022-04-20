@@ -216,14 +216,25 @@ Since these parameters can be chained into one request, their actions need to co
 > Order doesn't matter between Query Parameters
 
 ##### Use Cases Examples
+Following are some examples of `Query Parameter` usage:
+> Think of `image.jpg` as 🍺
+<details>
+  <summary>Original</summary>
+  
+  <img src="https://images.unsplash.com/photo-1644844616430-c0756c5b17a1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2148&q=80" width="700px">
+</details>
 ###### Examples - Resizing Operations
-- `/path/image.jpg?w=500`: Will scale down `image.jpg` **width** to **500px** if its original width is higher, if the original width is lower, will NOT scale up, it will skip resizing maintaining aspect-ratio. Height is downscaled progressively in proportion to the new width
-- `/path/image.jpg?h=500`: Same as above but this time comparisons and dimensions are related to `image.jpg` **heights**
-- `/path/image.jpg?w=500&h=100`: Unless the values provided are not complementary related to the originals, this will crop `image.jpg` to be **500px width** and **100px height**. If any of the values is bigger than its original counterpart resize is skipped and the original image is returned
-- `/path/image.jpg?w=500&h=100&f=contain`: Will resize the `image.jpg` **canvas to 500x100** and scale down the image mantaining proportions leaving a **black background**
-- `/path/image.jpg?w=500&h=100&f=contain&p=west`: Same as above but will **align** `image.jpg` on the left of the canvas
-- `/path/image.jpg?w=500&h=100&f=contain&p=west&bg={"r":0,"g":0,"b":100,"alpha":0.3}`: Same as above but the black background will match the `rgba` color in the params
-- `/path/image.jpg?w=500&h=100&k=nearest`: Using `nearest` **kernel** to process `image.jpg`
+- `/path/image.jpg?w=300`: Will scale down `image.jpg` **width** to **300px** if its original width is higher, if the original width is lower, will NOT scale up, it will skip resizing maintaining aspect-ratio. Height is downscaled progressively in proportion to the new width
+  <details>
+    <summary>Result</summary>
+    <img src="https://images.unsplash.com/photo-1644844616430-c0756c5b17a1?ixlib=rb-1.2.1&  ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2148&q=80" width="300px">
+  </details>
+- `/path/image.jpg?h=300`: Same as above but this time comparisons and dimensions are related to `image.jpg` **heights**
+- `/path/image.jpg?w=300&h=100`: Unless the values provided are not complementary related to the originals, this will crop `image.jpg` to be **300px width** and **100px height**. If any of the values is bigger than its original counterpart resize is skipped and the original image is returned
+- `/path/image.jpg?w=300&h=100&f=contain`: Will resize the `image.jpg` **canvas to 300x100** and scale down the image mantaining proportions leaving a **black background**
+- `/path/image.jpg?w=300&h=100&f=contain&p=west`: Same as above but will **align** `image.jpg` on the left of the canvas
+- `/path/image.jpg?w=300&h=100&f=contain&p=west&bg={"r":0,"g":0,"b":100,"alpha":0.3}`: Same as above but the black background will match the `rgba` color in the params
+- `/path/image.jpg?w=300&h=100&k=nearest`: Using `nearest` **kernel** to process `image.jpg`
 - `/path/image.jpg?ex={"top":10,"bottom":20,"left":50,"right":10}`: Extends the image with as many px as described in each position in params. Can be chained with `bg` to give to the background a different color
 - `/path/image.jpg?cb={"left":0,"top":0,"width":300,"height":50}`: **Crops before** resizing `image.jpg`  
 - `/path/image.jpg?ca={"left":0,"top":0,"width":300,"height":50}`: **Crops after** resizing `image.jpg`
@@ -421,11 +432,11 @@ Along with the edits to almost all the code structure, there are still a couple 
 
 ### TODO
 What needs to be addressed soon:
-- [ ] Add support for remaining [Resizing Operations](https://sharp.pixelplumbing.com/api-resize)
+- [x] Add support for remaining [Resizing Operations](https://sharp.pixelplumbing.com/api-resize)
 - [x] Add support for [Image Operations](https://sharp.pixelplumbing.com/api-operation)
 - [x] Add support for [Color Manipulation](https://sharp.pixelplumbing.com/api-colour)
 - [x] Add support for [Channel Manipulation](https://sharp.pixelplumbing.com/api-channel)
-- [ ] Add Images under each option in the Docs
+- [x] Add Images under each option in the Docs
 - [ ] Allow `Base64` encoding for long and explicit param values (Arrays and Objects)
 - [ ] Create presets for popular transforms that can be applied all at once with a special query param and have priority over other query parameters
 - [ ] Extend `DELETE` endpoint to remove multiple assets at once, similar to `POST` but reversed.
