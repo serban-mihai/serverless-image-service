@@ -74,7 +74,7 @@ resources:
       Properties:
         DistributionConfig:
           HttpVersion: "http2"
-          Comment: "Cloudfront Distribution for image-service"
+          Comment: "Cloudfront Distribution for image-service-${self:provider.stage}"
           DefaultCacheBehavior:
             TargetOriginId: "ApiGateway"
             ViewerProtocolPolicy: "redirect-to-https"

@@ -419,6 +419,24 @@ There are a couple of things to be done **before deploying**:
 5. `Optional` Place inside `src/assets/` any **Watermark** of your choice to apply it further over images.
 6. `Optional` If you don't want to include **GET** (List), **POST** and **DELETE** routes deployed you can just comment them in `serverless.yml`. That will just deploy the **GET** that will serve assets to clients, leaving up to you to upload manually assets within the `S3 Bucket` or integrate this operation with another service.
 
+If you opt for not deploying POST and DELETE you can disable CORS as well on S3 resource sharing by commenting the following lines in `serverless.yml`:
+```
+CorsConfiguration:
+  CorsRules:
+    - AllowedMethods:
+        - "POST"
+        - "DELETE"
+      AllowedOrigins:
+        - "*"
+      AllowedHeaders:
+        - "*"
+      ExposedHeaders:
+        - "x-amz-server-side-encryption"
+        - "x-amz-request-id"
+        - "x-amz-id-2"
+      MaxAge: 3000
+```
+
 The reason we are creating the Certificate in `us-east-1` is that for some reason AWS won't accept to create resources in other regions such as `eu-central-1` if the Certificate also belongs in `eu-central-1`
 After the above points are checked everything should be ready to go for [deployment](#how-to-deploy).
 - After the `CloudFormation Stack` deploys, add a `CNAME` of the created `CloudFront Distribution` within your **external CDN DNS** or **Route53** and **Proxy** traffic through it. The `distribution` looks like: `randomhash0123.cloudfront.net` and has to be assosiated with the name of your `S3 Bucket`.

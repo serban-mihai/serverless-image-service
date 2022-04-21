@@ -16,8 +16,11 @@ exports.handler = async (event, context) => {
   try {
     // Attempt to retrieve the requested image on S3 from the request path
     const bucket = getSetting("SOURCE_BUCKET");
-    const result = await listImages(bucket);
-    const images = await JSON.stringify(result.Contents, 2, null);
+    const { Contents } = await listImages(bucket);
+    for (const image of Contents) {
+      image.ETag = image.ETag.replace(/"/g, "");
+    }
+    const images = await JSON.stringify(Contents, 2, null);
 
     const response = parseResponse(context, images);
     return response;
