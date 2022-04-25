@@ -1,3 +1,4 @@
+![Banner](https://cdn.serbanmihai.com/serverless-image-service/repo/readme.png)
 # Serverless Image-Service
 
 The project is inspired by [Serverless Sharp](https://github.com/venveo/serverless-sharp) but doesn't seem to be maintained anymore. The core features have been kept, with some bugs being fixed while other features being temporarily cut. Some might be reintroduced in near future releases.
@@ -87,7 +88,7 @@ Gets a list of all the images in the **S3 Bucket** (currently limited to 1000 ke
     {
       "Key": "path/image-second.png",
       "LastModified": "2022-04-15T13:35:23.000Z",
-      "ETag": "\"firstimageetagrandomhsh123456789\"",
+      "ETag": "firstimageetagrandomhsh123456789",
       "ChecksumAlgorithm": [],
       "Size": 182728,
       "StorageClass": "STANDARD"
@@ -95,7 +96,7 @@ Gets a list of all the images in the **S3 Bucket** (currently limited to 1000 ke
     {
       "Key": "image.jpg",
       "LastModified": "2022-04-15T13:35:22.000Z",
-      "ETag": "\"secondimageetagrandomhsh12345678\"",
+      "ETag": "secondimageetagrandomhsh12345678",
       "ChecksumAlgorithm": [],
       "Size": 403063,
       "StorageClass": "STANDARD"
@@ -103,7 +104,7 @@ Gets a list of all the images in the **S3 Bucket** (currently limited to 1000 ke
     {
       "Key": "random/path/image-third.png",
       "LastModified": "2022-04-15T13:35:23.000Z",
-      "ETag": "\"thirdtimageetagrandomhsh98765432\"",
+      "ETag": "thirdtimageetagrandomhsh98765432",
       "ChecksumAlgorithm": [],
       "Size": 1599028,
       "StorageClass": "STANDARD"
@@ -267,12 +268,12 @@ Following are some examples of `Query Parameter` usage:
 
 ###### Examples - Color Manipulation
 
-| Query                                                                                                                                                                              | Processed Image                                                                  |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `/path/image.jpg?t={"r":255,"g":16,"b":240}`<br>**Tint** `image.jpg` with the provided `red=255` `green=16` `b=240` params. Warning, this affects the **Watermark** if any as well | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/color/t.jpg)  |
-| `/path/image.jpg?g=true`<br>Converts `image.jpg` to **Greyscale**                                                                                                                  | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/color/g.jpg)  |
-| `/path/image.jpg?pc=rgb16`<br>Sets the **current** `image.jpg` to `rgb16` **Colour Space**                                                                                         | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/color/pc.jpg) |
-| `/path/image.jpg?tc=srgb`<br>Sets the **output** `image.jpg` to `srgb` **Colour Space**                                                                                            | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/color/tc.jpg) |
+| Query                                                                                                                                                                                 | Processed Image                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `/path/image.jpg?t={"r":255,"g":16,"b":240}`<br>**Tint** `image.jpg` with the provided `red=255` `green=16` `blue=240` params. Warning, this affects the **Watermark** if any as well | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/color/t.jpg)  |
+| `/path/image.jpg?g=true`<br>Converts `image.jpg` to **Greyscale**                                                                                                                     | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/color/g.jpg)  |
+| `/path/image.jpg?pc=rgb16`<br>Sets the **current** `image.jpg` to `rgb16` **Colour Space**                                                                                            | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/color/pc.jpg) |
+| `/path/image.jpg?tc=srgb`<br>Sets the **output** `image.jpg` to `srgb` **Colour Space**                                                                                               | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/color/tc.jpg) |
 
 ###### Examples - Channel Manipulation
 
@@ -490,6 +491,7 @@ What needs to be addressed soon:
 - [x] Add Images under each option in the Docs
 - [x] Extend `DELETE` endpoint to remove multiple assets at once, similar to `POST` but reversed.
 - [ ] Allow `Base64` encoding for long and explicit param values (Arrays and Objects)
+- [ ] (Undecided) Allow for deploys over custom base paths `/images/random/path/image.jpg`. Not recommended
 - [ ] Create presets for popular transforms that can be applied all at once with a special query param and have priority over other query parameters
 - [ ] Find a way to bypass Lambda when no query params are detected by API Gateway and get the asset from S3 Static Site (requires public access)
 - [ ] Test the security `s=""` query parameter or change it with another solution
