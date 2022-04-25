@@ -5,7 +5,11 @@ With this solution, you can get your image service without relying on other paid
 
 The advantages of having your custom solution are flexibility, lower costs, and customization.
 
-[![More](https://cdn.serbanmihai.com/serverless-image-service/repo/button.png)](https://serbanmihai.com/quests/serverless-image-service)
+<div align="left">
+  <a href="https://serbanmihai.com/quests/serverless-image-service">
+    <img src="https://cdn.serbanmihai.com/serverless-image-service/repo/button.png" />
+  </a>
+</div>
 
 # Table of Content
 - [Table of Content](#table-of-content)
