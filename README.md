@@ -24,7 +24,7 @@ More about on my website: [Serverless Image-Service](https://serbanmihai.com/que
         - [Output Options | Docs](#output-options--docs)
       - [Use Cases Examples](#use-cases-examples)
         - [Examples - Resizing Operations](#examples---resizing-operations)
-          - [Examples - Image Operations](#examples---image-operations)
+        - [Examples - Image Operations](#examples---image-operations)
         - [Examples - Color Manipulation](#examples---color-manipulation)
         - [Examples - Channel Manipulation](#examples---channel-manipulation)
         - [Examples - Compositing Images](#examples---compositing-images)
@@ -241,7 +241,7 @@ Following are some examples of `Query Parameter` usage:
 | `/path/image.jpg?ca={"left":0,"top":0,"width":500,"height":50}`<br>**Crops after** resizing `image.jpg`                                                                                                                                                                                              | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/resize/ca.jpg)     |
 | `/path/image.jpg?tr=10`<br>**Trims** the similar value **10 pixels** around the edges of `image.jpg`                                                                                                                                                                                                 | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/resize/tr.jpg)     |
 
-###### Examples - Image Operations
+##### Examples - Image Operations
 
 | Query                                                                                                                                                                                                                                                                         | Processed Image                                                                        |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
