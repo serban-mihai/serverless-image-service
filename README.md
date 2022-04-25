@@ -1,53 +1,51 @@
 ![Banner](https://cdn.serbanmihai.com/serverless-image-service/repo/readme.png)
-# Serverless Image-Service
 
 The project is inspired by [Serverless Sharp](https://github.com/venveo/serverless-sharp) but doesn't seem to be maintained anymore. The core features have been kept, with some bugs being fixed while other features being temporarily cut. Some might be reintroduced in near future releases.
 With this solution, you can get your image service without relying on other paid solutions from Cloud providers such as [CloudFlare](https://www.cloudflare.com/products/cloudflare-images/), [Akamai](https://developer.akamai.com/akamai-image-and-video-manager), [Imgix](https://imgix.com/) to name a few.
 
 The advantages of having your custom solution are flexibility, lower costs, and customization.
 
-## Table of Content
-- [Serverless Image-Service](#serverless-image-service)
-  - [Table of Content](#table-of-content)
-  - [About](#about)
-    - [Public S3 Bucket](#public-s3-bucket)
-    - [Caching Strategy](#caching-strategy)
-    - [Routes](#routes)
-      - [GET - List Images](#get---list-images)
-      - [GET - Get Image](#get---get-image)
-        - [Supported Query Parameters](#supported-query-parameters)
-          - [Resizing Operations | Docs](#resizing-operations--docs)
-          - [Image Operations | Docs](#image-operations--docs)
-          - [Color Manipulation | Docs](#color-manipulation--docs)
-          - [Channel Manipulation | Docs](#channel-manipulation--docs)
-          - [Compositing Images | Docs](#compositing-images--docs)
-          - [Output Options | Docs](#output-options--docs)
-        - [Use Cases Examples](#use-cases-examples)
-          - [Examples - Resizing Operations](#examples---resizing-operations)
+# Table of Content
+- [Table of Content](#table-of-content)
+- [About](#about)
+  - [Public S3 Bucket](#public-s3-bucket)
+  - [Caching Strategy](#caching-strategy)
+  - [Routes](#routes)
+    - [GET - List Images](#get---list-images)
+    - [GET - Get Image](#get---get-image)
+      - [Supported Query Parameters](#supported-query-parameters)
+        - [Resizing Operations | Docs](#resizing-operations--docs)
+        - [Image Operations | Docs](#image-operations--docs)
+        - [Color Manipulation | Docs](#color-manipulation--docs)
+        - [Channel Manipulation | Docs](#channel-manipulation--docs)
+        - [Compositing Images | Docs](#compositing-images--docs)
+        - [Output Options | Docs](#output-options--docs)
+      - [Use Cases Examples](#use-cases-examples)
+        - [Examples - Resizing Operations](#examples---resizing-operations)
           - [Examples - Image Operations](#examples---image-operations)
-          - [Examples - Color Manipulation](#examples---color-manipulation)
-          - [Examples - Channel Manipulation](#examples---channel-manipulation)
-          - [Examples - Compositing Images](#examples---compositing-images)
-          - [Examples - Output Options](#examples---output-options)
-      - [POST - Upload Images](#post---upload-images)
-      - [DELETE - Remove Image](#delete---remove-image)
-  - [Setup](#setup)
-    - [Debugging](#debugging)
-  - [Local Development](#local-development)
-  - [How to Deploy](#how-to-deploy)
-  - [Differences from Venveo's service](#differences-from-venveos-service)
-    - [Improvements](#improvements)
-    - [TODO](#todo)
-  - [Consuming The Service Client-Side](#consuming-the-service-client-side)
-  - [Limits](#limits)
-  - [How to Contribute](#how-to-contribute)
+        - [Examples - Color Manipulation](#examples---color-manipulation)
+        - [Examples - Channel Manipulation](#examples---channel-manipulation)
+        - [Examples - Compositing Images](#examples---compositing-images)
+        - [Examples - Output Options](#examples---output-options)
+    - [POST - Upload Images](#post---upload-images)
+    - [DELETE - Remove Image](#delete---remove-image)
+- [Setup](#setup)
+  - [Debugging](#debugging)
+- [Local Development](#local-development)
+- [How to Deploy](#how-to-deploy)
+- [Differences from Venveo's service](#differences-from-venveos-service)
+  - [Improvements](#improvements)
+  - [TODO](#todo)
+- [Consuming The Service Client-Side](#consuming-the-service-client-side)
+- [Limits](#limits)
+- [How to Contribute](#how-to-contribute)
 
-## About
+# About
 
 The service is meant to be consumed from both a client App to fetch images from the GET route, and a CMS to manage static assets by uploading and removing them from an **AWS S3 Bucket** through the POST and DELETE routes.
 It is capable of storing incoming binary data and serving outcoming images with additional processing for size and quality on-demand. Image processing is handled by the [Sharp](https://github.com/lovell/sharp) library.
 
-### Public S3 Bucket
+## Public S3 Bucket
 Warning, this is enabled by default, if you deploy your **S3 Bucket** will have Host for Static Site enabled and access will be public!
 Currently, I'm investigating how to **bypass the Lambda triggers** if the request has no query parameters aka. it doesn't require any processing over the image requested. Something might be achievable by **tweaking the API Gateway config** but I don't have a certain answer yet.
 Anyway, the service is going to perfectly work with a private **S3 Bucket**, you can disable this by commenting the following lines in `serverless.yml` before deploying:
@@ -62,14 +60,14 @@ PublicAccessBlockConfiguration:
 ``` 
 Alternatively, you can comment just the first 2 lines to disable Static Hosting and change the remaining values to be `true`
 
-### Caching Strategy
+## Caching Strategy
 The only CDN solution offered by this service is `AWS CloudFront`, which serves as **Caching** place for avoiding useless stress on `Lambda` in case of high traffic aka. many requests at once, `Lambda`'s free tier might be generous with 1M requests/month free, but why waste them? 
 If you have access to an external CDN that can also **Cache** content from the Origin then it would be a good idea to register your `CloudFront` distribution as **Proxy** to a DNS and Cache there as well successful responses.
 
 Depending on costs on both sides and overall traffic, by using this strategy you could easily use the entire solution for free!
 More about this in my [article](https://serbanmihai.com/quests/serverless-image-service#) 
 
-### Routes
+## Routes
 | Method   | Route     | Description                            | Content-Type In                         | Content-Type Out                | CORS            | Cache     | Lambda                         |
 | -------- | --------- | -------------------------------------- | --------------------------------------- | ------------------------------- | --------------- | --------- | ------------------------------ |
 | `GET`    | `/`       | [List Images](#get---list-images)      | `not-required`                          | `application/json`              | `none`          | `none`    | `image-service-<stage>-list`   |
@@ -77,7 +75,7 @@ More about this in my [article](https://serbanmihai.com/quests/serverless-image-
 | `POST`   | `/{any+}` | [Upload Images](#post---upload-images) | `multipart/form-data` or `not-required` | `application/json`              | `CUSTOM_DOMAIN` | `none`    | `image-service-<stage>-post`   |
 | `DELETE` | `/{any+}` | [Remove Image](#delete---remove-image) | `not-required` or `application/json`    | `application/json`              | `CUSTOM_DOMAIN` | `none`    | `image-service-<stage>-delete` |
 
-#### GET - List Images
+### GET - List Images
 Gets a list of all the images in the **S3 Bucket** (currently limited to 1000 keys). It has been designed for **debugging purposes only**, but can be extended to list subpaths as well as being so integrated into CMS workflows.
 > `GET` https://domain.com/
 
@@ -124,7 +122,7 @@ Gets a list of all the images in the **S3 Bucket** (currently limited to 1000 ke
   }
   ```
 
-#### GET - Get Image
+### GET - Get Image
 This endpoint has 2 purposes, based on receiving query parameters or not:
 - `Without query params`: It returns the original file from the key provided (path + filename)
 - `With query params`: Attempts to fetch the original file and processes it based on what options are supported before returning it.
@@ -155,9 +153,9 @@ For some codec and config reasons, some formats that are applied `q=70` or highe
   }
   ```
 
-##### Supported Query Parameters
+#### Supported Query Parameters
 Currently, the following query parameters are supported:
-###### Resizing Operations | [Docs](https://sharp.pixelplumbing.com/api-resize)
+##### Resizing Operations | [Docs](https://sharp.pixelplumbing.com/api-resize)
 - `w=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **width** which the image is requested to scale at
 - `h=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#resize) | A positive number of **px** that represents the new **height** which the image is requested to scale at
 - `f=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-resize#parameters) | The **fit** for when both **width and height** are used, can be `cover`, `contain`, `fill`, `inside` or `outside`. Defaults to `cover` 
@@ -169,7 +167,7 @@ Currently, the following query parameters are supported:
 - `ca=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-resize#extract) | **Extract/crop** a region of the image **after** resizing
 - `tr=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-resize#trim) | **Trim** "boring" pixels from all edges that contain values similar to the top-left pixel
 
-###### Image Operations | [Docs](https://sharp.pixelplumbing.com/api-operation)
+##### Image Operations | [Docs](https://sharp.pixelplumbing.com/api-operation)
 - `r=` | `<Integer>`: [📝](https://sharp.pixelplumbing.com/api-operation#rotate) | An integer number that represents the **rotation degree** at which the image will be rotated. Negative numbers allowed for counter-clockwise rotations.
 - `flip=` | `<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flip) | If true will **mirror** the image on the **Y axis**
 - `flop=` | `<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-operation#flop) | If true will **mirror** the image on the **X axis**
@@ -191,24 +189,24 @@ Currently, the following query parameters are supported:
 - `rc=` | `<Array>`: [📝](https://sharp.pixelplumbing.com/api-operation#recomb) | **Recomb** the image with the specified matrix.
 - `mo=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-operation#modulate) | **Modulate** transform the image using brightness, saturation, hue rotation, and lightness. See Object structure in Docs
 
-###### Color Manipulation | [Docs](https://sharp.pixelplumbing.com/api-colour)
+##### Color Manipulation | [Docs](https://sharp.pixelplumbing.com/api-colour)
 - `t=` | `<Object>`: [📝](https://sharp.pixelplumbing.com/api-colour#tint) | **Tint** the image using the provided chroma while preserving the image luminance. Value is an Object with `r` `g` `b` props. Alpha is ignored.
 - `g=` | `<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-colour#greyscale) | Convert to 8-bit **greyscale** if the value is `true`or `1`
 - `pc=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-colour#pipelinecolourspace) | The input image will be **converted** to the provided **colourspace** at the start of the pipeline. Possible values: `multiband`, `b-w`, `histogram`, `xyz`, `lab`, `cmyk`, `labq`, `rgb`, `cmc`, `lch`, `labs`, `srgb`, `yxy`, `fourier`, `rgb16`, `grey16`, `matrix`, `scrgb`, `hsv`, `last`, 
 - `tc=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-colour#tocolourspace) | Set the **output colourspace**. Possible values same as above
 
-###### Channel Manipulation | [Docs](https://sharp.pixelplumbing.com/api-channel)
+##### Channel Manipulation | [Docs](https://sharp.pixelplumbing.com/api-channel)
 - `ra=` | `<Boolean>`: [📝](https://sharp.pixelplumbing.com/api-channel#removealpha) | if value is `true` then **Remove Alpha** channel from `image.jpg` if any
 - `ea=` | `<Float>`: [📝](https://sharp.pixelplumbing.com/api-channel#ensurealpha) | **Ensure Alpha** channel on `image.jpg` by the number in the value
 - `ec=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-channel#extractchannel) | **Extract a Single Channel** from `image.jpg`. Possible values are `red`, `green`, `blue` and `alpha` 
 - `jc=` | `<Array>`: [📝](https://sharp.pixelplumbing.com/api-channel#joinchannel) | **Join more channels** into `image.jpg`. Value is an array of links to images with different channels to be fetched and then merged. Warning, is error prone, use carefully.
 - `bb=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-channel#bandbool) | Perform a **Bitwise Boolean** operation on all input image channels (bands) to produce a single channel output image. Possible values are `and`, `or` and `eor`
 
-###### Compositing Images | [Docs](https://sharp.pixelplumbing.com/api-composite)
+##### Compositing Images | [Docs](https://sharp.pixelplumbing.com/api-composite)
 - `wm=` | `<String>` [📝](https://sharp.pixelplumbing.com/api-composite#composite) | The name of the **Watermark** to be applied over the image. Static assets must be stored inside the `src/assets` directory
 - `gr=` | `<String>` [📝](https://sharp.pixelplumbing.com/api-composite#parameters) | The **position** where to apply the Watermark on the original image. Defaults to `southwest`, other positions are described as cardinal points, `northeast`, `west`, `center`...
 
-###### Output Options | [Docs](https://sharp.pixelplumbing.com/api-resize)
+##### Output Options | [Docs](https://sharp.pixelplumbing.com/api-resize)
 - `q=` | `<Integer>`: A positive number **between 1 and 100** that represents the new **quality** which the image is requested to be compressed at
 - `fm=` | `<String>`: [📝](https://sharp.pixelplumbing.com/api-output#toformat) | The name of the format you want to convert the original image, if not supported returns the original format with other eventual optimizations applied. Still experimental, stating to [Sharp Docs](https://sharp.pixelplumbing.com/api-output) you can pass the following values: `jpeg`, `png`, `webp`, `gif`, `jp2` (not yet supported), `tiff`, `avif`, `heif`, `raw`,
 - `ll=` | `<Boolean>`: It allows to enable **Lossless** Compression when available, you can pass booleans `true` or `false` or integers `0` or `1`. It defaults to `false` if not passed or other stranger values are detected.
@@ -216,7 +214,7 @@ Currently, the following query parameters are supported:
 Since these parameters can be chained into one request, their actions need to coexist in the final image. Some rules apply when for example you get both `w` and `h` in the same request, or when you have just one of them but also `q`
 > Order doesn't matter between Query Parameters
 
-##### Use Cases Examples
+#### Use Cases Examples
 Following are some examples of `Query Parameter` usage:
 > Think of `image.jpg` as 🍺
 <details>
@@ -225,7 +223,7 @@ Following are some examples of `Query Parameter` usage:
   <img src="https://cdn.serbanmihai.com/serverless-image-service/repo/original.jpg">
 </details>
 
-###### Examples - Resizing Operations
+##### Examples - Resizing Operations
 
 | Query                                                                                                                                                                                                                                                                                                | Processed Image                                                                       |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
@@ -266,7 +264,7 @@ Following are some examples of `Query Parameter` usage:
 | `/path/image.jpg?rc=[[0.3588,0.7044,0.1368],[0.2990,0.5870,0.1140],[0.2392,0.4696,0.0912]]`<br>**Recomb** `image.jpg` to match the matrix of values provided                                                                                                                  | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/image/rc.jpg)       |
 | `/path/image.jpg?mo={"brightness":0.5,"saturation":0.5,"hue":90}`<br>**Modulate** explicit values `brightness`, `saturation` and `hue` over `image.jpg`                                                                                                                       | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/image/mo.jpg)       |
 
-###### Examples - Color Manipulation
+##### Examples - Color Manipulation
 
 | Query                                                                                                                                                                                 | Processed Image                                                                  |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
@@ -275,7 +273,7 @@ Following are some examples of `Query Parameter` usage:
 | `/path/image.jpg?pc=rgb16`<br>Sets the **current** `image.jpg` to `rgb16` **Colour Space**                                                                                            | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/color/pc.jpg) |
 | `/path/image.jpg?tc=srgb`<br>Sets the **output** `image.jpg` to `srgb` **Colour Space**                                                                                               | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/color/tc.jpg) |
 
-###### Examples - Channel Manipulation
+##### Examples - Channel Manipulation
 
 | Query                                                                                                                                                                                            | Processed Image                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
@@ -285,7 +283,7 @@ Following are some examples of `Query Parameter` usage:
 | `/path/image.jpg?jc=["https://.../firstImage.jpg","https://.../secondImage.jpg","https://.../thirdImage.jpg"]`<br>Fetches images in values' urls and **Joins Channels** of each with `image.jpg` | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/channel/jc.jpg) |
 | `/path/image.jpg?bb=eor`<br>**Bitwises** the channels of `image.jpg` based on `eor` logical to return a single channel                                                                           | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/channel/bb.jpg) |
 
-###### Examples - Compositing Images
+##### Examples - Compositing Images
 
 | Query                                                                                                                                                                                                                                                                           | Processed Image                                                                           |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
@@ -293,7 +291,7 @@ Following are some examples of `Query Parameter` usage:
 | `/path/image.jpg?wm=companyLogo.png&gr=northeast`<br>Applies the `companyLogo.png` watermark over `image.jpg` in `northeast` position aka. top-right. Pro-tip, leave some padding when designing the watermark, currently there is no offset option that works with `gravity`   | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/compositing/wmgr2.jpg) |
 | `/path/image.jpg?wm=companyLogo.png&gr=center`<br>Applies the `companyLogo.png` watermark over `image.jpg` in `center` position aka. well, center. Pro-tip, leave some padding when designing the watermark, currently there is no offset option that works with `gravity`      | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/compositing/wmgr3.jpg) |
 
-###### Examples - Output Options
+##### Examples - Output Options
 
 | Query                                                                                                                                                                                                              | Processed Image                                                                        |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
@@ -302,7 +300,7 @@ Following are some examples of `Query Parameter` usage:
 | `/path/image.jpg?w=250&q=30`<br>For last, it will attempt to scale down `image.jpg` to **250px width** (with height proportionally scaled-down as well) and then reduce the quality of the scaled image by **70%** | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/output/qthird.jpg)  |
 | `/path/image.jpg?w=100&fm=webp&ll=false`<br>Resizes `image.jpg` to **100px width** with proportional height and converts it to be in `webp` format, disable **lossless** convertion.                               | ![image](https://cdn.serbanmihai.com/serverless-image-service/repo/output/fm.webp)     |
 
-#### POST - Upload Images
+### POST - Upload Images
 Uploads one or many images to a specific path inside an **S3 Bucket**. Once provided `/path/to/upload` the function will attempt to upload all the files provided under it, if any of the selected filenames are already contained inside the same path, it will throw a conflict error.
 
 Note that this endpoint is supposed to receive a `Content-Type: multipart/form-data` payload format to work but this depends on the library or tool you use to make the request.
@@ -371,7 +369,7 @@ Once the data gets parsed, it's directly written on the **S3 Bucket** from the *
   }
   ```
 
-#### DELETE - Remove Image
+### DELETE - Remove Image
 Removes images that correspond to the key (path + filename) provided with the request. The payload is an `application/json` that has the `images` key a list of string filenames to be removed within the path you invoked the function over. It can delete as many files as you pass to it. they just have to all be already stored within S3, if any of keys aren't available will throw an error, if all files have been deleted will return a successful message.
 
 > Payload:
@@ -406,7 +404,7 @@ Removes images that correspond to the key (path + filename) provided with the re
     "message": "Images [ first.jpg, second.jpg ] don't exist under the requested path /random/path"
   }
   ```
-## Setup
+# Setup
 
 Clone and install NPM dependencies:
 - `git clone https://github.com/serban-mihai/serverless-image-service.git`
@@ -443,19 +441,19 @@ After the above points are checked everything should be ready to go for [deploym
 - After the `CloudFormation Stack` deploys, add a `CNAME` of the created `CloudFront Distribution` within your **external CDN DNS** or **Route53** and **Proxy** traffic through it. The `distribution` looks like: `randomhash0123.cloudfront.net` and has to be assosiated with the name of your `S3 Bucket`.
 > Record Example: **Type**: `CNAME` | **Name**: `my.domain.com` | **Value**: `randomhash0123.cloudfront.net` 
 
-### Debugging
+## Debugging
 To debug endpoints I recommend the [Thunder Client](https://www.thunderclient.com/) extension for VSCode, it's feature-rich and has everything you need to send requests and debug endpoints. If you don't find yourself comfortable you can also use **Postman** instead, or `curl` if you're a true hardcore!
 
 You can find both Thunder and Postman Collections and Environment in their directories inside the repo, they have predefined requests that cover all the functionality of the service, import them and change the environment accordingly with your **domain**, **path**, and **filename**
 
-## Local Development
+# Local Development
 
 Before running the localhost environment consider importing into either **Thunder** or **Postman** their corresponding Collections and Environments.
 You can keep the `*-local.json` and change just **filename** and **path** as you debug.
 
 For local development `serverless-offline` plugin is used, to use it you first need to [Deploy](#how-to-deploy) it. After the deployment succeeds, you can run `sls offline --stage <YOUR_STAGE>` or from NPM `npm run offline:<YOUR_STAGE>` and use Thunder or Postman against the `local` Environment.
 
-## How to Deploy
+# How to Deploy
 
 To deploy the app you can either use `sls deploy --stage <YOUR_STAGE>` if you have Serverless installed Globally, or use the NPN script desired you can find in `package.json`, ex `npm run deploy:dev` will deploy on **dev** environment.
 
@@ -465,10 +463,10 @@ If this doesn't help feel free to open an issue 😁
 If you plan to debug your remote environments (dev, staging, prod) you can use the **Thunder** and **Postman** Collections with the `*-prod.json` environment.
 Just make sure to adjust the values for the env variables before.
 
-## Differences from Venveo's service
+# Differences from Venveo's service
 
 Along with the edits to almost all the code structure, there are still a couple of things unchanged such as the security chunk.
-### Improvements
+## Improvements
 - Switched from Object-Oriented to Functional programming paradigm
 - Updated dependencies and Serverless version to V3
 - Removed deprecated code on both Node and Serverless sides
@@ -481,7 +479,7 @@ Along with the edits to almost all the code structure, there are still a couple 
 - Added Thunder Client and Postman Collections for easy debugging
 - Removed Tests
 
-### TODO
+## TODO
 What needs to be addressed soon:
 - [x] Add support for remaining [Resizing Operations](https://sharp.pixelplumbing.com/api-resize)
 - [x] Add support for [Image Operations](https://sharp.pixelplumbing.com/api-operation)
@@ -502,7 +500,7 @@ What needs to be addressed soon:
 - [ ] Establish an efficient CLI Rollback of CloudFormation Stack from Serverless, it breaks because buckets related are not empty before removed
 - [ ] Introduce Unit Tests back
 
-## Consuming The Service Client-Side
+# Consuming The Service Client-Side
 
 On the client-side, the App needs to communicate with the service through any library that can send HTTP requests, while most endpoints are pretty straight forward there is one, in particular, that needs more work to make it work properly, the **Upload Image POST**
 As described [above](#post---upload-images) needs to receive a POST request with a `binary multipart/form-data` body. Every framework/library has different ways to pack such an object, I'll show how I do it using **React/Next.js** and the `fetch` library.
@@ -552,11 +550,11 @@ The `FormData` is the interface you should be targetting when packing an object 
 
 Most of the time you won't need to include any `Content-Type` header into the request, libraries know how to attach it automatically because the full header for such a request in its full form would look something like this `multipart/form-data; boundary=---------------------------157259096020916242283640002646`. That `boundary` is the separator between each object in the request, each image in our case. It generates when a `FormData` is created and the service is parsing this once the request gets to `Lambda`, and since you don't have to worry about it before sending the request, that's a win from both sides!
 
-## Limits
+# Limits
 
 Many limits are still unknown due to the early life of the project, this thing was just born 😅
 - There is a limit of 10Mb max for payloads on the `POST` route, meaning you can't upload 50 images at once unless they're thumbnails
 - I'm still breaking things, will update as soon as something happens...
 
-## How to Contribute
+# How to Contribute
 If you want to contribute to the project just clone it, move to a branch with a simple naming convention `with-this-format` and push your branch, then open me a PR with some information about your changes and I'll take a look.
