@@ -413,7 +413,7 @@ Clone and install NPM dependencies:
 - `cd serverless-image-service && npm i`
 
 There are a couple of things to be done **before deploying**:
-1. Setup your AWS_CREDENTIALS within your local environment, being it you machine, a Docker container or a CI/CD Pipeline secrets. More about permissions needed in [Serverless Docs](https://www.serverless.com/framework/docs/providers/aws/guide/credentials)
+1. Setup your `AWS_CREDENTIALS` within your local environment, being it you machine, a Docker container or a CI/CD Pipeline secrets. More about permissions needed in [Serverless Docs](https://www.serverless.com/framework/docs/providers/aws/guide/credentials)
 2. Create an `AWS Certificate` in [ACM](https://aws.amazon.com/certificate-manager/) on the `us-east-1` region that belongs to your `domain.com` and register the `CNAME` inside your external CDN or in [Route53](https://aws.amazon.com/route53/). Also, remember to apply the necessary adjustments to your CDN for SSL/TLS traffic to avoid funky responses from API Gateway
 3. Adjust `example-s3-bucket-policy.json` by changing the `<CUSTOM_DOMAIN>` with your `domain.com`. You will have multiple files for different environments if you use different domains or subdomains
 4. Copy `example.settings.yml` to `settings.yml` and adjust missing values such as the `region`, `CUSTOM_DOMAIN`, and `ACM_CERTIFICATE_ARN` which is the ID of the Cert you created at step one. Note that the `SOURCE_BUCKET` and `CUSTOM_DOMAIN` will have to be equal within the same stage
@@ -491,6 +491,7 @@ What needs to be addressed soon:
 - [x] Personal favourite, add watermark with custom position, can be achieved with [Compositing](https://sharp.pixelplumbing.com/api-composite)
 - [x] Add Images under each option in the Docs
 - [x] Extend `DELETE` endpoint to remove multiple assets at once, similar to `POST` but reversed.
+- [ ] Enforce **watermark** with query param for gravity but without query param for name with a Serverless flag, to avoid public expose of raw images without branding. 
 - [ ] Allow `Base64` encoding for long and explicit param values (Arrays and Objects)
 - [ ] (Undecided) Allow for deploys over custom base paths `/images/random/path/image.jpg`. Not recommended
 - [ ] Create presets for popular transforms that can be applied all at once with a special query param and have priority over other query parameters
