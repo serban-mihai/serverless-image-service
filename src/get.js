@@ -6,7 +6,6 @@ const { processImage } = require("./helpers/pipeline");
 const sharp = require("sharp");
 
 exports.handler = async (event, context) => {
-  console.log(event.queryStringParameters);
   const beforeHandle = beforeHandleRequest(event);
 
   // Mandatory security parameter is not passed

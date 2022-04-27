@@ -413,12 +413,13 @@ Clone and install NPM dependencies:
 - `cd serverless-image-service && npm i`
 
 There are a couple of things to be done **before deploying**:
-1. Create an AWS Certificate in [ACM](https://aws.amazon.com/certificate-manager/) on the `us-east-1` region that belongs to your `domain.com` and register the `CNAME` inside your external CDN or in [Route53](https://aws.amazon.com/route53/). Also, remember to apply the necessary adjustments to your CDN for SSL/TLS traffic to avoid funky responses from API Gateway
-2. Adjust `example-s3-bucket-policy.json` by changing the `<CUSTOM_DOMAIN>` with your `domain.com`. You will have multiple files for different environments if you use different domains or subdomains
-3. Copy `example.settings.yml` to `settings.yml` and adjust missing values such as the `region`, `CUSTOM_DOMAIN`, and `ACM_CERTIFICATE_ARN` which is the ID of the Cert you created at step one. Note that the `SOURCE_BUCKET` and `CUSTOM_DOMAIN` will have to be equal within the same stage
-4. Make sure not to already have an S3 Bucket on AWS with the same name of `CUSTOM_DOMAIN`
-5. `Optional` Place inside `src/assets/` any **Watermark** of your choice to apply it further over images.
-6. `Optional` If you don't want to include **GET** (List), **POST** and **DELETE** routes deployed you can just comment them in `serverless.yml`. That will just deploy the **GET** that will serve assets to clients, leaving up to you to upload manually assets within the `S3 Bucket` or integrate this operation with another service.
+1. Setup your AWS_CREDENTIALS within your local environment, being it you machine, a Docker container or a CI/CD Pipeline secrets. More about permissions needed in [Serverless Docs](https://www.serverless.com/framework/docs/providers/aws/guide/credentials)
+2. Create an `AWS Certificate` in [ACM](https://aws.amazon.com/certificate-manager/) on the `us-east-1` region that belongs to your `domain.com` and register the `CNAME` inside your external CDN or in [Route53](https://aws.amazon.com/route53/). Also, remember to apply the necessary adjustments to your CDN for SSL/TLS traffic to avoid funky responses from API Gateway
+3. Adjust `example-s3-bucket-policy.json` by changing the `<CUSTOM_DOMAIN>` with your `domain.com`. You will have multiple files for different environments if you use different domains or subdomains
+4. Copy `example.settings.yml` to `settings.yml` and adjust missing values such as the `region`, `CUSTOM_DOMAIN`, and `ACM_CERTIFICATE_ARN` which is the ID of the Cert you created at step one. Note that the `SOURCE_BUCKET` and `CUSTOM_DOMAIN` will have to be equal within the same stage
+5. Make sure not to already have an S3 Bucket on AWS with the same name of `CUSTOM_DOMAIN`
+6. `Optional` Place inside `src/assets/` any **Watermark** of your choice to apply it further over images.
+7. `Optional` If you don't want to include **GET** (List), **POST** and **DELETE** routes deployed you can just comment them in `serverless.yml`. That will just deploy the **GET** that will serve assets to clients, leaving up to you to upload manually assets within the `S3 Bucket` or integrate this operation with another service.
 
 If you opt for not deploying POST and DELETE you can disable CORS as well on S3 resource sharing by commenting the following lines in `serverless.yml`:
 ```
