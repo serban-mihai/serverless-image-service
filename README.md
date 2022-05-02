@@ -491,6 +491,7 @@ What needs to be addressed soon:
 - [x] Personal favourite, add watermark with custom position, can be achieved with [Compositing](https://sharp.pixelplumbing.com/api-composite)
 - [x] Add Images under each option in the Docs
 - [x] Extend `DELETE` endpoint to remove multiple assets at once, similar to `POST` but reversed.
+- [ ] Implement **TypeScript**!
 - [ ] Enforce **watermark** with query param for gravity but without query param for name with a Serverless flag, to avoid public expose of raw images without branding. 
 - [ ] Allow `Base64` encoding for long and explicit param values (Arrays and Objects)
 - [ ] (Undecided) Allow for deploys over custom base paths `/images/random/path/image.jpg`. Not recommended
